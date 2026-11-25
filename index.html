@@ -122,3 +122,530 @@ document.getElementById('pageTitle').textContent=element.textContent.trim();
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhasebe Takip Sistemi</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#263247}
+.sidebar{width:245px;background:#17243a;color:white;position:fixed;top:0;bottom:0;padding:25px 15px;overflow-y:auto}
+.logo{font-size:21px;font-weight:bold;padding:10px;margin-bottom:20px}
+.menu a{display:block;padding:12px;color:#cbd5e1;text-decoration:none;border-radius:7px;margin:4px 0;cursor:pointer;font-size:14px}
+.menu a:hover,.menu a.active{background:#30435f;color:white}
+.main{margin-left:245px;padding:28px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.header h1{font-size:24px;margin:0}
+.user-bar{display:flex;align-items:center;gap:10px;font-size:13px}
+.badge{padding:5px 10px;border-radius:20px;font-weight:bold;font-size:12px}
+.badge-admin{background:#dcfce7;color:#166534}
+.badge-viewer{background:#e0e7ff;color:#1e40af}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:17px;margin-bottom:25px}
+.card{background:white;padding:22px;border-radius:12px;box-shadow:0 2px 8px #00000009}
+.card p{color:#718096;margin:0 0 12px;font-size:14px}
+.card h2{margin:0;font-size:22px;color:#263b59}
+.panel{background:white;padding:22px;border-radius:12px;margin-top:20px;box-shadow:0 2px 8px #00000006}
+.panel h2{margin-top:0;font-size:18px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #edf0f5;font-size:14px}
+th{color:#718096;font-size:13px;background:#f8fafc}
+button{background:#2563eb;color:white;border:0;padding:10px 16px;border-radius:7px;cursor:pointer;font-size:14px}
+button:hover{background:#1d4ed8}
+button.btn-danger{background:#dc2626;padding:6px 10px;font-size:12px}
+button.btn-danger:hover{background:#b91c1c}
+button.btn-secondary{background:#475569}
+button.btn-success{background:#16a34a}
+button.btn-success:hover{background:#15803d}
+input,select{padding:10px;border:1px solid #dce2eb;border-radius:7px;margin:4px;max-width:100%;font-size:14px}
+.section{display:none}
+.section.active{display:block}
+.form{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0;align-items:center}
+
+/* Admin gizleme sınıfı */
+.admin-only{display:none}
+body.is-admin .admin-only{display:block}
+body.is-admin .form.admin-only{display:flex}
+body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
+
+/* Sürükle-Bırak Excel Alanı */
+.dropzone{border:2px dashed #94a3b8;border-radius:12px;padding:26px;text-align:center;background:#f8fafc;cursor:pointer;transition:0.2s;margin-bottom:15px}
+.dropzone:hover,.dropzone.dragover{border-color:#2563eb;background:#eff6ff}
+.dropzone p{margin:6px 0;color:#475569;font-size:14px}
+.dropzone small{color:#64748b}
+
+/* Giriş Modalı */
+.login-overlay{position:fixed;inset:0;background:#17243a;display:flex;align-items:center;justify-content:center;z-index:9999}
+.login-box{background:white;padding:32px;border-radius:14px;width:100%;max-width:380px;box-shadow:0 10px 25px #00000030}
+.login-box h2{margin:0 0 8px;color:#17243a}
+.login-box p{margin:0 0 20px;color:#64748b;font-size:14px}
+.login-box input{width:100%;margin:0 0 12px}
+.login-box button{width:100%;padding:12px}
+.error-text{color:#dc2626;font-size:13px;margin-top:10px}
+
+@media(max-width:850px){
+.sidebar{width:100%;position:relative;height:auto}
+.menu{display:grid;grid-template-columns:repeat(2,1fr)}
+.main{margin-left:0;padding:15px}
+.cards{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- GİRİŞ EKRANI -->
+<div id="loginOverlay" class="login-overlay">
+  <div class="login-box">
+    <h2>✦ MUHASEBE PRO</h2>
+    <p>Devam etmek için hesabınızla giriş yapın</p>
+    <input type="email" id="loginEmail" placeholder="E-posta adresiniz">
+    <input type="password" id="loginPassword" placeholder="Şifreniz">
+    <button onclick="handleLogin()">Giriş Yap</button>
+    <div id="loginError" class="error-text"></div>
+  </div>
+</div>
+
+<aside class="sidebar">
+  <div class="logo">✦ MUHASEBE PRO</div>
+  <nav class="menu">
+    <a class="active" onclick="openPage('anasayfa',this)">▦ Ana Sayfa</a>
+    <a onclick="openPage('kasa',this)">💰 Kasa Defteri</a>
+    <a onclick="openPage('alis',this)">📥 Alış Faturaları</a>
+    <a onclick="openPage('satis',this)">📤 Satış Faturaları</a>
+    <a onclick="openPage('musteri',this)">👥 Müşteriler</a>
+    <a onclick="openPage('tedarikci',this)">🚚 Tedarikçiler</a>
+    <a onclick="openPage('odeme',this)">💳 Fatura Ödemeleri</a>
+    <a onclick="openPage('excel',this)" class="admin-only">📊 Excel Yükle</a>
+    <a onclick="openPage('kdv',this)">🧮 KDV Takibi</a>
+    <a onclick="openPage('arac',this)">🚘 Araç Alış Satış</a>
+    <a onclick="openPage('stok',this)">📦 Stok Durumu</a>
+    <a onclick="openPage('personel',this)">👨‍💼 Personel Listesi</a>
+    <a onclick="openPage('izin',this)">📅 Personel İzinleri</a>
+    <a onclick="openPage('hasar',this)">📋 Hasar Dosyaları</a>
+  </nav>
+</aside>
+
+<main class="main">
+  <header class="header">
+    <h1 id="pageTitle">Genel Bakış</h1>
+    <div class="user-bar">
+      <span id="userEmailText"></span>
+      <span id="roleBadge" class="badge"></span>
+      <button class="btn-secondary" style="padding:7px 12px;font-size:12px" onclick="handleLogout()">Çıkış</button>
+    </div>
+  </header>
+
+  <!-- ANA SAYFA -->
+  <section id="anasayfa" class="section active">
+    <div class="cards">
+      <div class="card"><p>Toplam Kasa</p><h2 id="statKasa">0,00 ₺</h2></div>
+      <div class="card"><p>Toplam Alacak</p><h2 id="statAlacak">0,00 ₺</h2></div>
+      <div class="card"><p>Toplam Borç</p><h2 id="statBorc">0,00 ₺</h2></div>
+      <div class="card"><p>Kayıtlı Müşteri</p><h2 id="statMusteri">0</h2></div>
+    </div>
+    <div class="panel">
+      <h2>Son Kasa İşlemleri</h2>
+      <table>
+        <thead><tr><th>Tarih</th><th>Tür</th><th>Açıklama</th><th>Tutar</th></tr></thead>
+        <tbody id="recentCashBody"><tr><td colspan="4">Yükleniyor...</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- KASA DEFTERİ -->
+  <section id="kasa" class="section">
+    <div class="panel">
+      <h2>Kasa Defteri</h2>
+      <div class="form admin-only">
+        <input type="date" id="kasaTarih">
+        <select id="kasaTur"><option value="Gelir">Gelir</option><option value="Gider">Gider</option></select>
+        <input id="kasaAciklama" placeholder="Açıklama" style="min-width:220px">
+        <input type="number" step="0.01" id="kasaTutar" placeholder="Tutar (₺)">
+        <button onclick="addCash()">Kayıt Ekle</button>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Tarih</th>
+            <th>Tür</th>
+            <th>Açıklama</th>
+            <th>Tutar</th>
+            <th class="admin-only">İşlem</th>
+          </tr>
+        </thead>
+        <tbody id="cashTableBody"><tr><td colspan="5">Kayıt yok.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- MÜŞTERİLER -->
+  <section id="musteri" class="section">
+    <div class="panel">
+      <h2>Müşteriler</h2>
+      <div class="form admin-only">
+        <input id="musteriAd" placeholder="Müşteri Adı / Ünvanı" style="min-width:220px">
+        <input id="musteriTel" placeholder="Telefon">
+        <input id="musteriVergi" placeholder="Vergi / TC No">
+        <button onclick="addSimpleRecord('customers', {ad: val('musteriAd'), telefon: val('musteriTel'), vergi_no: val('musteriVergi')}, loadCustomers)">Müşteri Ekle</button>
+      </div>
+      <table>
+        <thead><tr><th>Ad / Ünvan</th><th>Telefon</th><th>Vergi / TC</th><th class="admin-only">İşlem</th></tr></thead>
+        <tbody id="customersBody"><tr><td colspan="4">Kayıt yok.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- TEDARİKÇİLER -->
+  <section id="tedarikci" class="section">
+    <div class="panel">
+      <h2>Tedarikçiler</h2>
+      <div class="form admin-only">
+        <input id="tedarikciAd" placeholder="Tedarikçi Adı / Ünvanı" style="min-width:220px">
+        <input id="tedarikciTel" placeholder="Telefon">
+        <button onclick="addSimpleRecord('suppliers', {ad: val('tedarikciAd'), telefon: val('tedarikciTel')}, loadSuppliers)">Tedarikçi Ekle</button>
+      </div>
+      <table>
+        <thead><tr><th>Ad / Ünvan</th><th>Telefon</th><th class="admin-only">İşlem</th></tr></thead>
+        <tbody id="suppliersBody"><tr><td colspan="3">Kayıt yok.</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SÜRÜKLE-BIRAK EXCEL YÜKLEME (SADECE ADMİN) -->
+  <section id="excel" class="section">
+    <div class="panel">
+      <h2>Sürükle-Bırak Excel Yükleme</h2>
+      <p style="color:#64748b;font-size:14px">Önce verilerin aktarılacağı tabloyu seçin, ardından Excel (.xlsx, .xls, .csv) dosyanızı aşağıdaki alana sürükleyip bırakın.</p>
+      
+      <div class="form">
+        <label><strong>Hedef Tablo:</strong></label>
+        <select id="excelTargetTable">
+          <option value="cash_transactions">Kasa Defteri (cash_transactions)</option>
+          <option value="customers">Müşteriler (customers)</option>
+          <option value="suppliers">Tedarikçiler (suppliers)</option>
+          <option value="invoices">Faturalar (invoices)</option>
+          <option value="invoice_payments">Fatura Ödemeleri (invoice_payments)</option>
+        </select>
+      </div>
+
+      <div id="dropzone" class="dropzone" onclick="document.getElementById('excelFileInput').click()">
+        <p><strong>📂 Excel dosyasını buraya sürükleyip bırakın</strong></p>
+        <p>veya dosya seçmek için tıklayın</p>
+        <small>Desteklenen formatlar: .xlsx, .xls, .csv (İlk satır sütun başlığı olmalıdır)</small>
+        <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileSelect(event)">
+      </div>
+
+      <div id="excelPreviewArea" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <strong id="excelSummaryText"></strong>
+          <div>
+            <button class="btn-secondary" onclick="clearExcelPreview()">Temizle</button>
+            <button class="btn-success" onclick="uploadExcelToSupabase()">Veritabanına Aktar</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;max-height:360px">
+          <table id="excelPreviewTable"></table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DİĞER BÖLÜMLER -->
+  <section id="alis" class="section"><div class="panel"><h2>Alış Faturaları</h2><p>Excel Yükle sekmesinden <code>invoices</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
+  <section id="satis" class="section"><div class="panel"><h2>Satış Faturaları</h2><p>Excel Yükle sekmesinden <code>invoices</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
+  <section id="odeme" class="section"><div class="panel"><h2>Fatura Ödemeleri</h2><p>Excel Yükle sekmesinden <code>invoice_payments</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
+  <section id="kdv" class="section"><div class="panel"><h2>KDV Takibi</h2><p>Alış ve satış KDV kayıtları burada takip edilecek.</p></div></section>
+  <section id="arac" class="section"><div class="panel"><h2>Araç Alış Satış</h2><p>Araç alış, satış ve ödeme kayıtları burada tutulacak.</p></div></section>
+  <section id="stok" class="section"><div class="panel"><h2>Stok Durumu</h2><p>Stok giriş ve çıkışları burada takip edilecek.</p></div></section>
+  <section id="personel" class="section"><div class="panel"><h2>Personel Listesi</h2><p>Personel kayıtları burada tutulacak.</p></div></section>
+  <section id="izin" class="section"><div class="panel"><h2>Personel İzinleri</h2><p>Personel izin kayıtları burada tutulacak.</p></div></section>
+  <section id="hasar" class="section"><div class="panel"><h2>Hasar Dosyaları</h2><p>Hasar dosyaları ve ödemeleri burada takip edilecek.</p></div></section>
+</main>
+
+<script>
+// 1. SUPABASE BİLGİLERİNİ BURAYA YAPIŞTIR
+const SUPABASE_URL = 'https://nkbhnpjnnfqmnjydfwa.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_0ZONDBCJueYJqi1gEf8OkA_cfFQEjsU';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+let currentUser = null;
+let isAdmin = false;
+let parsedExcelRows = [];
+
+const val = (id) => document.getElementById(id).value.trim();
+const formatMoney = (n) => Number(n || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+
+function openPage(id, element) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.menu a').forEach(a => a.classList.remove('active'));
+  if (element) {
+    element.classList.add('active');
+    document.getElementById('pageTitle').textContent = element.textContent.trim();
+  }
+}
+
+// OTURUM VE ROL KONTROLÜ
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    document.getElementById('loginOverlay').style.display = 'flex';
+    return;
+  }
+  currentUser = session.user;
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('userEmailText').textContent = currentUser.email;
+
+  // user_roles tablosundan rol kontrolü
+  const { data: roleData } = await sb
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  isAdmin = roleData && roleData.role === 'admin';
+  const badge = document.getElementById('roleBadge');
+
+  if (isAdmin) {
+    document.body.classList.add('is-admin');
+    badge.textContent = 'Yönetici (Tam Yetki)';
+    badge.className = 'badge badge-admin';
+  } else {
+    document.body.classList.remove('is-admin');
+    badge.textContent = 'Personel (Salt Okunur)';
+    badge.className = 'badge badge-viewer';
+  }
+
+  document.getElementById('kasaTarih').valueAsDate = new Date();
+  await loadAllData();
+}
+
+async function handleLogin() {
+  const email = val('loginEmail');
+  const password = val('loginPassword');
+  const errDiv = document.getElementById('loginError');
+  errDiv.textContent = '';
+
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    errDiv.textContent = 'Giriş başarısız: ' + error.message;
+  } else {
+    await checkSession();
+  }
+}
+
+async function handleLogout() {
+  await sb.auth.signOut();
+  location.reload();
+}
+
+// VERİ YÜKLEME FONKSİYONLARI
+async function loadAllData() {
+  await Promise.all([loadCash(), loadCustomers(), loadSuppliers()]);
+}
+
+async function loadCash() {
+  const { data, error } = await sb
+    .from('cash_transactions')
+    .select('*')
+    .order('islem_tarihi', { ascending: false });
+
+  if (error) return console.error(error);
+
+  let toplamKasa = 0;
+  const tbody = document.getElementById('cashTableBody');
+  const recentBody = document.getElementById('recentCashBody');
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="5">Henüz kayıt bulunmuyor.</td></tr>';
+    recentBody.innerHTML = '<tr><td colspan="4">Henüz kayıt bulunmuyor.</td></tr>';
+    document.getElementById('statKasa').textContent = formatMoney(0);
+    return;
+  }
+
+  data.forEach(row => {
+    const tutar = Number(row.miktar || 0);
+    if ((row.işlem_türü || '').toLowerCase() === 'gider') toplamKasa -= tutar;
+    else toplamKasa += tutar;
+  });
+
+  document.getElementById('statKasa').textContent = formatMoney(toplamKasa);
+
+  tbody.innerHTML = data.map(row => `
+    <tr>
+      <td>${row.islem_tarihi || '-'}</td>
+      <td>${row.işlem_türü || '-'}</td>
+      <td>${row['Açıklama'] || row.aciklama || '-'}</td>
+      <td>${formatMoney(row.miktar)}</td>
+      <td class="admin-only">
+        <button class="btn-danger" onclick="deleteRecord('cash_transactions', '${row.id}', loadCash)">Sil</button>
+      </td>
+    </tr>
+  `).join('');
+
+  recentBody.innerHTML = data.slice(0, 5).map(row => `
+    <tr>
+      <td>${row.islem_tarihi || '-'}</td>
+      <td>${row.işlem_türü || '-'}</td>
+      <td>${row['Açıklama'] || row.aciklama || '-'}</td>
+      <td>${formatMoney(row.miktar)}</td>
+    </tr>
+  `).join('');
+}
+
+async function addCash() {
+  if (!isAdmin) return alert('Bu işlem için yönetici yetkisi gerekir.');
+  const payload = {
+    islem_tarihi: val('kasaTarih') || new Date().toISOString().slice(0, 10),
+    işlem_türü: val('kasaTur'),
+    Açıklama: val('kasaAciklama'),
+    miktar: Number(val('kasaTutar')),
+    created_by: currentUser.id
+  };
+  if (!payload.Açıklama || !payload.miktar) return alert('Açıklama ve tutar giriniz.');
+
+  const { error } = await sb.from('cash_transactions').insert([payload]);
+  if (error) return alert('Hata: ' + error.message);
+
+  document.getElementById('kasaAciklama').value = '';
+  document.getElementById('kasaTutar').value = '';
+  await loadCash();
+}
+
+async function loadCustomers() {
+  const { data } = await sb.from('customers').select('*').order('ad', { ascending: true });
+  const tbody = document.getElementById('customersBody');
+  document.getElementById('statMusteri').textContent = data ? data.length : 0;
+
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="4">Henüz müşteri kaydı yok.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(c => `
+    <tr>
+      <td>${c.ad || '-'}</td>
+      <td>${c.telefon || '-'}</td>
+      <td>${c.vergi_no || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRecord('customers', '${c.id}', loadCustomers)">Sil</button></td>
+    </tr>
+  `).join('');
+}
+
+async function loadSuppliers() {
+  const { data } = await sb.from('suppliers').select('*').order('ad', { ascending: true });
+  const tbody = document.getElementById('suppliersBody');
+  if (!data || data.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3">Henüz tedarikçi kaydı yok.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.map(s => `
+    <tr>
+      <td>${s.ad || '-'}</td>
+      <td>${s.telefon || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRecord('suppliers', '${s.id}', loadSuppliers)">Sil</button></td>
+    </tr>
+  `).join('');
+}
+
+async function addSimpleRecord(table, payload, reloadFn) {
+  if (!isAdmin) return alert('Yetkisiz işlem.');
+  if (!payload.ad) return alert('Lütfen ad/ünvan alanını doldurun.');
+  const { error } = await sb.from(table).insert([payload]);
+  if (error) return alert('Hata: ' + error.message);
+  await reloadFn();
+}
+
+async function deleteRecord(table, id, reloadFn) {
+  if (!isAdmin) return alert('Yetkisiz işlem.');
+  if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
+  const { error } = await sb.from(table).delete().eq('id', id);
+  if (error) return alert('Silme hatası: ' + error.message);
+  await reloadFn();
+}
+
+// SÜRÜKLE-BIRAK EXCEL OKUMA VE AKTARMA
+const dropzone = document.getElementById('dropzone');
+['dragenter', 'dragover'].forEach(evt => {
+  dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
+});
+['dragleave', 'drop'].forEach(evt => {
+  dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
+});
+dropzone.addEventListener('drop', (e) => {
+  const file = e.dataTransfer.files[0];
+  if (file) processExcelFile(file);
+});
+
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processExcelFile(file);
+}
+
+function processExcelFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: null });
+
+    if (!jsonRows.length) return alert('Excel dosyasında veri bulunamadı.');
+
+    // Tarih nesnelerini YYYY-MM-DD formatına çevir
+    parsedExcelRows = jsonRows.map(row => {
+      const clean = {};
+      for (const [k, v] of Object.entries(row)) {
+        if (v instanceof Date) {
+          clean[k.trim()] = v.toISOString().slice(0, 10);
+        } else {
+          clean[k.trim()] = v;
+        }
+      }
+      return clean;
+    });
+
+    renderExcelPreview(parsedExcelRows);
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderExcelPreview(rows) {
+  const headers = Object.keys(rows[0]);
+  const table = document.getElementById('excelPreviewTable');
+  document.getElementById('excelSummaryText').textContent = `Toplam ${rows.length} satır okundu (İlk 20 satır önizleniyor)`;
+  document.getElementById('excelPreviewArea').style.display = 'block';
+
+  const thead = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
+  const tbody = `<tbody>${rows.slice(0, 20).map(r => `<tr>${headers.map(h => `<td>${r[h] ?? ''}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  table.innerHTML = thead + tbody;
+}
+
+function clearExcelPreview() {
+  parsedExcelRows = [];
+  document.getElementById('excelPreviewArea').style.display = 'none';
+  document.getElementById('excelFileInput').value = '';
+}
+
+async function uploadExcelToSupabase() {
+  if (!isAdmin) return alert('Sadece yönetici toplu aktarım yapabilir.');
+  if (!parsedExcelRows.length) return;
+
+  const targetTable = val('excelTargetTable');
+  const { error } = await sb.from(targetTable).insert(parsedExcelRows);
+
+  if (error) {
+    alert('Aktarım hatası (Excel sütun başlıklarının tablo sütunlarıyla aynı olduğundan emin olun):\n' + error.message);
+  } else {
+    alert(`${parsedExcelRows.length} kayıt başarıyla "${targetTable}" tablosuna aktarıldı!`);
+    clearExcelPreview();
+    await loadAllData();
+  }
+}
+
+checkSession();
+</script>
+</body>
+</html>
