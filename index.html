@@ -43,7 +43,6 @@ input,select{padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;margin:
 .form{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0;align-items:center;background:#f8fafc;padding:12px;border-radius:9px;border:1px solid #e2e8f0}
 .num-right{text-align:right !important}
 
-/* Özet Kutuları (Excel Görünümleri) */
 .summary-grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
 .summary-box{border:1px solid #cbd5e1;border-radius:9px;overflow:hidden;background:#fff}
 .summary-box table{margin:0}
@@ -57,21 +56,18 @@ input,select{padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;margin:
 .bg-blue-soft{background:#dbeafe !important;color:#dc2626 !important;font-weight:bold}
 .text-red{color:#dc2626 !important;font-weight:bold}
 
-/* Cari Kart Üst Şablonu */
 .cari-card-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px}
 .cari-info-table td:first-child{background:#cbd5e1;font-weight:bold;width:130px}
 
-/* Admin gizleme */
 .admin-only{display:none}
 body.is-admin .admin-only{display:block}
 body.is-admin .form.admin-only{display:flex}
 body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
+body:not(.is-admin) .form{display:none !important}
 
-/* Excel Dropzone */
 .dropzone{border:2px dashed #94a3b8;border-radius:12px;padding:24px;text-align:center;background:#f8fafc;cursor:pointer;margin-bottom:15px}
 .dropzone:hover,.dropzone.dragover{border-color:#2563eb;background:#eff6ff}
 
-/* Giriş Overlay */
 .login-overlay{position:fixed;inset:0;background:#17243a;display:flex;align-items:center;justify-content:center;z-index:9999}
 .login-box{background:white;padding:32px;border-radius:14px;width:100%;max-width:380px;box-shadow:0 10px 25px #00000030}
 .login-box h2{margin:0 0 8px;color:#17243a}
@@ -87,16 +83,10 @@ body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
 .main{margin-left:0;padding:15px}
 .cards{grid-template-columns:repeat(2,1fr)}
 }
- .admin-only{display:none}
-body.is-admin .admin-only{display:block}
-body.is-admin .form.admin-only{display:flex}
-body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
-body:not(.is-admin) .form{display:none !important} 
 </style>
 </head>
 <body>
 
-<!-- GİRİŞ EKRANI -->
 <div id="loginOverlay" class="login-overlay">
   <div class="login-box">
     <h2>✦ MUHASEBE PRO</h2>
@@ -139,7 +129,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </header>
 
-  <!-- 1. ANA SAYFA -->
   <section id="anasayfa" class="section active">
     <div class="cards">
       <div class="card"><p>Genel Kasa Bakiyesi</p><h2 id="statKasa">0,00 ₺</h2></div>
@@ -158,7 +147,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 2. KASA DEFTERİ -->
   <section id="kasa" class="section">
     <div class="panel">
       <h2>Kasa Defteri</h2>
@@ -247,7 +235,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 3. SATIŞ FATURALARI -->
   <section id="satis" class="section">
     <div class="panel">
       <h2>SATIŞ FATURALARI</h2>
@@ -298,7 +285,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 4. ALIŞ FATURALARI -->
   <section id="alis" class="section">
     <div class="panel">
       <h2>ALIŞ FATURALARI</h2>
@@ -348,7 +334,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 5. KDV TAKİBİ -->
   <section id="kdv" class="section">
     <div class="panel">
       <h2>2026 YILI KDV TAKİBİ</h2>
@@ -378,7 +363,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 6. ÖDEMELER & VADELER -->
   <section id="vadeler" class="section">
     <div class="panel">
       <h2>Fatura Ödemeleri & Vade Takibi</h2>
@@ -414,7 +398,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 7. FATURA ÖDEMESİ YAPILACAKLAR (IBAN) -->
   <section id="yapilacakOdeme" class="section">
     <div class="panel">
       <h2>Fatura Ödemesi — Yapılacaklar</h2>
@@ -437,7 +420,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 8. CARİ EKSTRE & KARTLAR -->
   <section id="cari" class="section">
     <div class="panel">
       <h2>Cari Kart & Ekstre</h2>
@@ -502,7 +484,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 9. AYLIK RAPOR -->
   <section id="aylikRapor" class="section">
     <div class="panel">
       <h2>AYLIK RAPOR — ORSO OTO, SAVAŞ KARAOĞLANOĞLU OTOMOTİV LTD.</h2>
@@ -545,7 +526,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 10. HASAR DOSYALARI -->
   <section id="hasar" class="section">
     <div class="panel">
       <h2>HASAR DOSYALARI</h2>
@@ -583,7 +563,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 11. ARAÇLAR -->
   <section id="arac" class="section">
     <div class="panel">
       <h2>ARAÇLAR</h2>
@@ -619,7 +598,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 12. ÇALIŞANLARIN LİSTESİ -->
   <section id="personel" class="section">
     <div class="panel">
       <h2>Çalışanların Listesi</h2>
@@ -663,7 +641,6 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 13. İZİN KAYITLARI -->
   <section id="izin" class="section">
     <div class="panel">
       <h2>İzin Kayıtları</h2>
@@ -686,11 +663,10 @@ body:not(.is-admin) .form{display:none !important}
     </div>
   </section>
 
-  <!-- 14. EXCEL TOPLU YÜKLEME -->
   <section id="excel" class="section">
     <div class="panel">
       <h2>Sürükle-Bırak Excel Toplu Yükleme</h2>
-      <div class="form">
+      <div class="form admin-only">
         <label><strong>Hedef Modül:</strong></label>
         <select id="excelTargetTable">
           <option value="cash_transactions">Kasa Defteri (cash_transactions)</option>
@@ -707,7 +683,7 @@ body:not(.is-admin) .form{display:none !important}
           <option value="cari_movements">Cari Ekstre Hareketleri (cari_movements)</option>
         </select>
       </div>
-      <div id="dropzone" class="dropzone" onclick="document.getElementById('excelFileInput').click()">
+      <div id="dropzone" class="dropzone admin-only" onclick="document.getElementById('excelFileInput').click()">
         <p><strong>📂 Excel dosyasını buraya sürükleyip bırakın</strong></p>
         <small>İlk satır veritabanı sütun adlarıyla eşleşmelidir (.xlsx, .xls, .csv)</small>
         <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileSelect(event)">
@@ -732,7 +708,6 @@ const SUPABASE_ANON_KEY = 'sb_publishable_0ZONDBCJueYJqi1gEf8OkA_cfFQEjsU';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 let currentUser = null;
-let isAdmin = false;
 let parsedExcelRows = [];
 let cashRowsCache = [];
 let salesCache = [];
@@ -748,7 +723,8 @@ const fmt = (n) => Number(n || 0).toLocaleString('tr-TR', { minimumFractionDigit
 
 function openPage(id, element) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
   document.querySelectorAll('.menu a').forEach(a => a.classList.remove('active'));
   if (element) {
     element.classList.add('active');
@@ -804,37 +780,17 @@ async function checkSession() {
     await Promise.all([loadVehicles(), loadLeaves()]);
   }
 }
-  currentUser = session.user;
-  document.getElementById('loginOverlay').style.display = 'none';
-  document.getElementById('userEmailText').textContent = currentUser.email;
-
-  const { data: roleData } = await sb.from('user_roles').select('role').eq('user_id', currentUser.id).maybeSingle();
-  isAdmin = roleData && roleData.role === 'admin';
-  const badge = document.getElementById('roleBadge');
-
-  if (isAdmin) {
-    document.body.classList.add('is-admin');
-    badge.textContent = 'Yönetici (Tam Yetki)';
-    badge.className = 'badge badge-admin';
-  } else {
-    document.body.classList.remove('is-admin');
-    badge.textContent = 'Personel (Salt Okunur)';
-    badge.className = 'badge badge-viewer';
-  }
-
-  const today = new Date().toISOString().slice(0, 10);
-  ['kasaTarih','ozetTarih','sfTarih','afTarih','kdvTarih','schTarih','upTarih','cmTarih','mrTarih','hdFatTarih','arAlisTarih','lvBas','lvBit'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = today;
-  });
-
-  await loadAllData();
-}
 
 async function handleLogin() {
   const errDiv = document.getElementById('loginError');
   errDiv.textContent = '';
-  const { error } = await sb.auth.signInWithPassword({ email: val('loginEmail'), password: val('loginPassword') });
+  const email = val('loginEmail');
+  const password = val('loginPassword');
+  if (!email || !password) {
+    errDiv.textContent = 'Lütfen e-posta ve şifre girin.';
+    return;
+  }
+  const { error } = await sb.auth.signInWithPassword({ email, password });
   if (error) errDiv.textContent = 'Giriş başarısız: ' + error.message;
   else await checkSession();
 }
@@ -845,7 +801,6 @@ async function handleLogout() {
 }
 
 async function deleteRow(table, id, reloadFn) {
-  if (!isAdmin) return alert('Yetkisiz işlem.');
   if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
   const { error } = await sb.from(table).delete().eq('id', id);
   if (error) return alert('Silme hatası: ' + error.message);
@@ -860,7 +815,6 @@ async function loadAllData() {
   ]);
 }
 
-/* --- KASA DEFTERİ --- */
 function normalizeTip(tip) {
   const t = (tip || '').toString().toUpperCase();
   if (t.includes('KRED')) return 'KREDİ KARTI';
@@ -957,7 +911,6 @@ async function addCash() {
   await loadCash();
 }
 
-/* --- SATIŞ FATURALARI --- */
 function renderSalesInvoices() {
   const cariQ = val('satisFiltreCari').toLowerCase();
   const ayQ = val('satisFiltreAy');
@@ -1018,7 +971,6 @@ async function addSalesInvoice() {
   await loadSalesInvoices();
 }
 
-/* --- ALIŞ FATURALARI --- */
 function renderPurchaseInvoices() {
   const cariQ = val('alisFiltreCari').toLowerCase();
   const ayQ = val('alisFiltreAy');
@@ -1078,7 +1030,6 @@ async function addPurchaseInvoice() {
   await loadPurchaseInvoices();
 }
 
-/* --- KDV TAKİBİ --- */
 async function loadVat() {
   const { data } = await sb.from('vat_tracking').select('*').order('tarih', { ascending: true });
   document.getElementById('vatTableBody').innerHTML = (data && data.length) ? data.map(r => `
@@ -1102,7 +1053,6 @@ async function addVatRow() {
   await loadVat();
 }
 
-/* --- ÖDEMELER & VADELER --- */
 function renderSchedules() {
   const yilQ = val('vadeFiltreYil');
   const ayQ = val('vadeFiltreAy');
@@ -1149,7 +1099,6 @@ async function addSchedule() {
   await loadSchedules();
 }
 
-/* --- YAPILACAK FATURA ÖDEMELERİ (IBAN) --- */
 async function loadUpcoming() {
   const { data } = await sb.from('upcoming_payments').select('*').order('vade', { ascending: true });
   document.getElementById('upcomingBody').innerHTML = (data && data.length) ? data.map(r => `
@@ -1168,7 +1117,6 @@ async function addUpcomingPayment() {
   await loadUpcoming();
 }
 
-/* --- CARİ EKSTRE & KARTLAR --- */
 async function loadCariAll() {
   const [{ data: accs }, { data: movs }] = await Promise.all([
     sb.from('cari_accounts').select('*').order('unvan', { ascending: true }),
@@ -1240,7 +1188,6 @@ async function addCariMovement() {
   await loadCariAll();
 }
 
-/* --- AYLIK RAPOR --- */
 function renderMonthlyReports() {
   const yilQ = val('mrFiltreYil');
   const ayQ = val('mrFiltreAy');
@@ -1294,7 +1241,6 @@ async function addMonthlyReport() {
   await loadMonthlyReports();
 }
 
-/* --- HASAR DOSYALARI --- */
 async function loadDamageFiles() {
   const { data } = await sb.from('damage_files').select('*').order('fatura_tarihi', { ascending: false });
   document.getElementById('damageFilesBody').innerHTML = (data && data.length) ? data.map(r => `
@@ -1320,7 +1266,6 @@ async function addDamageFile() {
   await loadDamageFiles();
 }
 
-/* --- ARAÇLAR --- */
 async function loadVehicles() {
   const { data } = await sb.from('vehicles').select('*').order('alis_tarihi', { ascending: false });
   document.getElementById('vehiclesBody').innerHTML = (data && data.length) ? data.map(r => `
@@ -1344,7 +1289,6 @@ async function addVehicle() {
   await loadVehicles();
 }
 
-/* --- ÇALIŞANLAR & İZİNLER --- */
 async function loadEmployees() {
   const { data } = await sb.from('employees').select('*').order('calisan_adi', { ascending: true });
   const list = data || [];
@@ -1396,7 +1340,6 @@ async function addLeave() {
   await loadLeaves();
 }
 
-/* --- SÜRÜKLE-BIRAK EXCEL --- */
 const dropzone = document.getElementById('dropzone');
 ['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
 ['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
@@ -1432,7 +1375,7 @@ function clearExcelPreview() {
 }
 
 async function uploadExcelToSupabase() {
-  if (!isAdmin || !parsedExcelRows.length) return;
+  if (!parsedExcelRows.length) return;
   const target = val('excelTargetTable');
   const { error } = await sb.from(target).insert(parsedExcelRows);
   if (error) return alert('Aktarım hatası:\n' + error.message);
