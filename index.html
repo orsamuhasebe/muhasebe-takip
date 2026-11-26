@@ -762,6 +762,48 @@ async function checkSession() {
     document.getElementById('loginOverlay').style.display = 'flex';
     return;
   }
+
+  currentUser = session.user;
+  document.getElementById('loginOverlay').style.display = 'none';
+  document.getElementById('userEmailText').textContent = currentUser.email;
+
+  const { data: roleData } = await sb
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', currentUser.id)
+    .maybeSingle();
+
+  const isAdmin = roleData && roleData.role === 'admin';
+  const badge = document.getElementById('roleBadge');
+
+  if (isAdmin) {
+    document.body.classList.add('is-admin');
+    document.querySelectorAll('.menu a').forEach(a => a.style.display = 'block');
+    badge.textContent = 'Yönetici (Tam Yetki)';
+    badge.className = 'badge badge-admin';
+  } else {
+    document.body.classList.remove('is-admin');
+    document.querySelectorAll('.menu a').forEach(a => {
+      a.style.display = a.classList.contains('staff-allowed') ? 'block' : 'none';
+    });
+    const firstAllowed = document.querySelector('.menu a.staff-allowed');
+    if (firstAllowed) openPage('arac', firstAllowed);
+    badge.textContent = 'Sınırlı Erişim (Araç & İzin)';
+    badge.className = 'badge badge-viewer';
+  }
+
+  const today = new Date().toISOString().slice(0, 10);
+  ['kasaTarih','ozetTarih','sfTarih','afTarih','kdvTarih','schTarih','upTarih','cmTarih','mrTarih','hdFatTarih','arAlisTarih','lvBas','lvBit'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+
+  if (isAdmin) {
+    await loadAllData();
+  } else {
+    await Promise.all([loadVehicles(), loadLeaves()]);
+  }
+}
   currentUser = session.user;
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('userEmailText').textContent = currentUser.email;
