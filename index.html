@@ -3,71 +3,75 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Muhasebe Takip Sistemi</title>
+<title>MUHASEBE PRO | ORSO OTO</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#263247}
-.sidebar{width:245px;background:#17243a;color:white;position:fixed;top:0;bottom:0;padding:25px 15px;overflow-y:auto}
-.logo{font-size:21px;font-weight:bold;padding:10px;margin-bottom:20px}
-.menu a{display:block;padding:12px;color:#cbd5e1;text-decoration:none;border-radius:7px;margin:4px 0;cursor:pointer;font-size:14px}
-.menu a:hover,.menu a.active{background:#30435f;color:white}
-.main{margin-left:245px;padding:28px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:10px}
-.header h1{font-size:24px;margin:0}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f5f9;color:#1e293b}
+.sidebar{width:255px;background:#17243a;color:white;position:fixed;top:0;bottom:0;padding:20px 14px;overflow-y:auto}
+.logo{font-size:20px;font-weight:bold;padding:8px 10px;margin-bottom:4px}
+.sublogo{font-size:11px;color:#94a3b8;padding:0 10px 16px;border-bottom:1px solid #293852;margin-bottom:12px}
+.menu a{display:block;padding:10px 12px;color:#cbd5e1;text-decoration:none;border-radius:7px;margin:3px 0;cursor:pointer;font-size:13.5px}
+.menu a:hover,.menu a.active{background:#30435f;color:white;font-weight:bold}
+.main{margin-left:255px;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.header h1{font-size:22px;margin:0}
 .user-bar{display:flex;align-items:center;gap:10px;font-size:13px}
 .badge{padding:5px 10px;border-radius:20px;font-weight:bold;font-size:12px}
 .badge-admin{background:#dcfce7;color:#166534}
 .badge-viewer{background:#e0e7ff;color:#1e40af}
-.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:17px;margin-bottom:25px}
-.card{background:white;padding:22px;border-radius:12px;box-shadow:0 2px 8px #00000009}
-.card p{color:#718096;margin:0 0 12px;font-size:14px}
-.card h2{margin:0;font-size:22px;color:#263b59}
-.panel{background:white;padding:22px;border-radius:12px;margin-top:20px;box-shadow:0 2px 8px #00000006}
-.panel h2{margin-top:0;font-size:18px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:20px}
+.card{background:white;padding:18px;border-radius:12px;box-shadow:0 2px 8px #00000009}
+.card p{color:#64748b;margin:0 0 8px;font-size:13px}
+.card h2{margin:0;font-size:20px;color:#1e293b}
+.panel{background:white;padding:20px;border-radius:12px;margin-top:16px;box-shadow:0 2px 8px #00000006}
+.panel h2{margin-top:0;font-size:17px;border-bottom:1px solid #f1f5f9;padding-bottom:10px}
 table{width:100%;border-collapse:collapse;margin-top:10px}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid #edf0f5;font-size:13px;white-space:nowrap}
-th{color:#718096;font-size:12px;background:#f8fafc}
-button{background:#2563eb;color:white;border:0;padding:10px 16px;border-radius:7px;cursor:pointer;font-size:14px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid #e2e8f0;font-size:12.5px;white-space:nowrap}
+th{color:#334155;font-size:11.5px;background:#f8fafc;font-weight:bold}
+button{background:#2563eb;color:white;border:0;padding:9px 14px;border-radius:7px;cursor:pointer;font-size:13px;font-weight:bold}
 button:hover{background:#1d4ed8}
-button.btn-danger{background:#dc2626;padding:6px 10px;font-size:12px}
+button.btn-danger{background:#dc2626;padding:5px 9px;font-size:11.5px}
 button.btn-danger:hover{background:#b91c1c}
 button.btn-secondary{background:#475569}
 button.btn-success{background:#16a34a}
 button.btn-success:hover{background:#15803d}
-input,select{padding:10px;border:1px solid #dce2eb;border-radius:7px;margin:4px;max-width:100%;font-size:14px}
+input,select{padding:8px 10px;border:1px solid #cbd5e1;border-radius:7px;margin:3px;max-width:100%;font-size:13px}
 .section{display:none}
 .section.active{display:block}
-.form{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0;align-items:center}
-
-/* Kasa Defteri Üst Özet Gridi */
-.kasa-top-grid{display:grid;grid-template-columns:1.8fr 1fr;gap:16px;margin-bottom:18px}
-.kasa-summary-box{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;background:#fff}
-.kasa-summary-table{margin-top:0}
-.kasa-summary-table th,.kasa-summary-table td{padding:8px 10px;font-size:12px}
-.kasa-date-cell{background:#0f172a;color:#fff;font-weight:bold;text-align:center}
-.kasa-subhead{background:#cbd5e1;color:#0f172a;font-weight:bold;text-align:center}
-.kasa-total-row td{font-weight:bold;color:#dc2626;background:#f8fafc}
-.kasa-daily-row td{background:#dc2626;color:#fff;font-weight:bold}
-.kasa-grand-row td{background:#0f172a;color:#fff;font-weight:bold}
-.kasa-cari-label{background:#dbeafe;color:#dc2626;font-weight:bold}
-.kasa-cari-val{background:#bfdbfe;color:#dc2626;font-weight:bold}
+.form{display:flex;flex-wrap:wrap;gap:5px;margin:12px 0;align-items:center;background:#f8fafc;padding:12px;border-radius:9px;border:1px solid #e2e8f0}
 .num-right{text-align:right !important}
 
-/* Admin gizleme sınıfı */
+/* Özet Kutuları (Excel Görünümleri) */
+.summary-grid-2{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;margin-bottom:16px}
+.summary-box{border:1px solid #cbd5e1;border-radius:9px;overflow:hidden;background:#fff}
+.summary-box table{margin:0}
+.summary-box th,.summary-box td{padding:7px 10px;font-size:12px}
+.bg-dark{background:#0f172a !important;color:#fff !important;font-weight:bold}
+.bg-navy{background:#1e3a8a !important;color:#fff !important}
+.bg-green{background:#14532d !important;color:#fff !important}
+.bg-cream{background:#fef9c3 !important;font-weight:bold}
+.bg-gray{background:#e2e8f0 !important;font-weight:bold;color:#0f172a}
+.bg-red-row td{background:#dc2626 !important;color:#fff !important;font-weight:bold}
+.bg-blue-soft{background:#dbeafe !important;color:#dc2626 !important;font-weight:bold}
+.text-red{color:#dc2626 !important;font-weight:bold}
+
+/* Cari Kart Üst Şablonu */
+.cari-card-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-bottom:16px}
+.cari-info-table td:first-child{background:#cbd5e1;font-weight:bold;width:130px}
+
+/* Admin gizleme */
 .admin-only{display:none}
 body.is-admin .admin-only{display:block}
 body.is-admin .form.admin-only{display:flex}
-body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
+body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
 
-/* Sürükle-Bırak Excel Alanı */
-.dropzone{border:2px dashed #94a3b8;border-radius:12px;padding:26px;text-align:center;background:#f8fafc;cursor:pointer;transition:0.2s;margin-bottom:15px}
+/* Excel Dropzone */
+.dropzone{border:2px dashed #94a3b8;border-radius:12px;padding:24px;text-align:center;background:#f8fafc;cursor:pointer;margin-bottom:15px}
 .dropzone:hover,.dropzone.dragover{border-color:#2563eb;background:#eff6ff}
-.dropzone p{margin:6px 0;color:#475569;font-size:14px}
-.dropzone small{color:#64748b}
 
-/* Giriş Modalı */
+/* Giriş Overlay */
 .login-overlay{position:fixed;inset:0;background:#17243a;display:flex;align-items:center;justify-content:center;z-index:9999}
 .login-box{background:white;padding:32px;border-radius:14px;width:100%;max-width:380px;box-shadow:0 10px 25px #00000030}
 .login-box h2{margin:0 0 8px;color:#17243a}
@@ -76,9 +80,7 @@ body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
 .login-box button{width:100%;padding:12px}
 .error-text{color:#dc2626;font-size:13px;margin-top:10px}
 
-@media(max-width:1050px){
-.kasa-top-grid{grid-template-columns:1fr}
-}
+@media(max-width:1050px){.summary-grid-2,.cari-card-grid{grid-template-columns:1fr}}
 @media(max-width:850px){
 .sidebar{width:100%;position:relative;height:auto}
 .menu{display:grid;grid-template-columns:repeat(2,1fr)}
@@ -93,7 +95,7 @@ body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
 <div id="loginOverlay" class="login-overlay">
   <div class="login-box">
     <h2>✦ MUHASEBE PRO</h2>
-    <p>Devam etmek için hesabınızla giriş yapın</p>
+    <p>ORSO OTO, SAVAŞ KARAOĞLANOĞLU OTOMOTİV LTD.</p>
     <input type="email" id="loginEmail" placeholder="E-posta adresiniz">
     <input type="password" id="loginPassword" placeholder="Şifreniz">
     <button onclick="handleLogin()">Giriş Yap</button>
@@ -103,255 +105,608 @@ body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
 
 <aside class="sidebar">
   <div class="logo">✦ MUHASEBE PRO</div>
+  <div class="sublogo">ORSO OTO OTOMOTİV LTD.</div>
   <nav class="menu">
     <a class="active" onclick="openPage('anasayfa',this)">▦ Ana Sayfa</a>
     <a onclick="openPage('kasa',this)">💰 Kasa Defteri</a>
-    <a onclick="openPage('alis',this)">📥 Alış Faturaları</a>
     <a onclick="openPage('satis',this)">📤 Satış Faturaları</a>
-    <a onclick="openPage('musteri',this)">👥 Müşteriler</a>
-    <a onclick="openPage('tedarikci',this)">🚚 Tedarikçiler</a>
-    <a onclick="openPage('odeme',this)">💳 Fatura Ödemeleri</a>
-    <a onclick="openPage('excel',this)" class="admin-only">📊 Excel Yükle</a>
+    <a onclick="openPage('alis',this)">📥 Alış Faturaları</a>
     <a onclick="openPage('kdv',this)">🧮 KDV Takibi</a>
-    <a onclick="openPage('arac',this)">🚘 Araç Alış Satış</a>
-    <a onclick="openPage('stok',this)">📦 Stok Durumu</a>
-    <a onclick="openPage('personel',this)">👨‍💼 Personel Listesi</a>
-    <a onclick="openPage('izin',this)">📅 Personel İzinleri</a>
+    <a onclick="openPage('vadeler',this)">📅 Ödemeler & Vadeler</a>
+    <a onclick="openPage('yapilacakOdeme',this)">💳 Fatura Ödemesi (IBAN)</a>
+    <a onclick="openPage('cari',this)">📒 Cari Ekstre & Kartlar</a>
+    <a onclick="openPage('aylikRapor',this)">📈 Aylık Rapor</a>
     <a onclick="openPage('hasar',this)">📋 Hasar Dosyaları</a>
+    <a onclick="openPage('arac',this)">🚘 Araçlar (Alış-Satış)</a>
+    <a onclick="openPage('personel',this)">👨‍💼 Çalışanların Listesi</a>
+    <a onclick="openPage('izin',this)">🗓️ İzin Kayıtları</a>
+    <a onclick="openPage('excel',this)" class="admin-only">📊 Excel Toplu Yükle</a>
   </nav>
 </aside>
 
 <main class="main">
   <header class="header">
-    <h1 id="pageTitle">Genel Bakış</h1>
+    <h1 id="pageTitle">Ana Sayfa</h1>
     <div class="user-bar">
       <span id="userEmailText"></span>
       <span id="roleBadge" class="badge"></span>
-      <button class="btn-secondary" style="padding:7px 12px;font-size:12px" onclick="handleLogout()">Çıkış</button>
+      <button class="btn-secondary" style="padding:6px 12px;font-size:12px" onclick="handleLogout()">Çıkış</button>
     </div>
   </header>
 
-  <!-- ANA SAYFA -->
+  <!-- 1. ANA SAYFA -->
   <section id="anasayfa" class="section active">
     <div class="cards">
       <div class="card"><p>Genel Kasa Bakiyesi</p><h2 id="statKasa">0,00 ₺</h2></div>
-      <div class="card"><p>Toplam Tahsilat</p><h2 id="statAlacak">0,00 ₺</h2></div>
-      <div class="card"><p>Toplam Ödeme</p><h2 id="statBorc">0,00 ₺</h2></div>
-      <div class="card"><p>Kayıtlı Müşteri</p><h2 id="statMusteri">0</h2></div>
+      <div class="card"><p>Satış Faturaları Toplamı</p><h2 id="statSatis">0,00 ₺</h2></div>
+      <div class="card"><p>Alış Faturaları Toplamı</p><h2 id="statAlis">0,00 ₺</h2></div>
+      <div class="card"><p>Aktif Çalışan Sayısı</p><h2 id="statCalisan">0</h2></div>
     </div>
     <div class="panel">
-      <h2>Son Kasa İşlemleri</h2>
+      <h2>Son Kasa Hareketleri</h2>
       <div style="overflow-x:auto">
         <table>
-          <thead><tr><th>Tarih</th><th>Kasa Türü</th><th>Açıklama</th><th>Tahsilat</th><th>Ödeme</th></tr></thead>
-          <tbody id="recentCashBody"><tr><td colspan="5">Yükleniyor...</td></tr></tbody>
+          <thead><tr><th>Tarih</th><th>Kasa Türü</th><th>Açıklama</th><th>Ödeme Tipi</th><th class="num-right">Tahsilat</th><th class="num-right">Ödeme</th></tr></thead>
+          <tbody id="recentCashBody"><tr><td colspan="6">Yükleniyor...</td></tr></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- KASA DEFTERİ -->
+  <!-- 2. KASA DEFTERİ -->
   <section id="kasa" class="section">
     <div class="panel">
       <h2>Kasa Defteri</h2>
-
-      <div class="kasa-top-grid">
-        <!-- SOL: GÜNLÜK KASA GİRİŞ / ÇIKIŞ ÖZETİ -->
-        <div class="kasa-summary-box">
-          <table class="kasa-summary-table">
+      <div class="summary-grid-2">
+        <div class="summary-box">
+          <table>
             <thead>
               <tr>
-                <th class="kasa-date-cell"><input type="date" id="ozetTarih" onchange="renderKasaSummary()" style="margin:0;padding:4px 6px;font-size:12px"></th>
-                <th colspan="2" class="kasa-subhead">KASA GİRİŞ</th>
-                <th colspan="2" class="kasa-subhead">KASA ÇIKIŞ</th>
+                <th class="bg-dark"><input type="date" id="ozetTarih" onchange="renderKasaSummary()" style="margin:0;padding:3px 6px;font-size:12px"></th>
+                <th colspan="2" class="bg-gray" style="text-align:center">KASA GİRİŞ</th>
+                <th colspan="2" class="bg-gray" style="text-align:center">KASA ÇIKIŞ</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td><strong>KREDİ KARTI</strong></td>
-                <td colspan="2" class="num-right" id="girisKredi">0,00 ₺</td>
-                <td><strong>KREDİ KARTI</strong></td>
-                <td class="num-right" id="cikisKredi">0,00 ₺</td>
-              </tr>
-              <tr>
-                <td><strong>NAKİT</strong></td>
-                <td colspan="2" class="num-right" id="girisNakit">0,00 ₺</td>
-                <td><strong>NAKİT</strong></td>
-                <td class="num-right" id="cikisNakit">0,00 ₺</td>
-              </tr>
-              <tr>
-                <td><strong>BANKA</strong></td>
-                <td colspan="2" class="num-right" id="girisBanka">0,00 ₺</td>
-                <td><strong>BANKA</strong></td>
-                <td class="num-right" id="cikisBanka">0,00 ₺</td>
-              </tr>
-              <tr>
-                <td><strong>ÇEK / SENET</strong></td>
-                <td colspan="2" class="num-right" id="girisCek">0,00 ₺</td>
-                <td><strong>ÇEK / SENET</strong></td>
-                <td class="num-right" id="cikisCek">0,00 ₺</td>
-              </tr>
-              <tr class="kasa-total-row">
-                <td>TOPLAM</td>
-                <td colspan="2" class="num-right" id="girisToplam">0,00 ₺</td>
-                <td>TOPLAM</td>
-                <td class="num-right" id="cikisToplam">0,00 ₺</td>
-              </tr>
-              <tr class="kasa-daily-row">
-                <td colspan="4">KASA GÜNLÜK BAKİYE</td>
-                <td class="num-right" id="gunlukBakiye">0,00 ₺</td>
-              </tr>
+              <tr><td class="bg-gray">KREDİ KARTI</td><td colspan="2" class="num-right" id="girisKredi">0,00 ₺</td><td class="bg-gray">KREDİ KARTI</td><td class="num-right" id="cikisKredi">0,00 ₺</td></tr>
+              <tr><td class="bg-gray">NAKİT</td><td colspan="2" class="num-right" id="girisNakit">0,00 ₺</td><td class="bg-gray">NAKİT</td><td class="num-right" id="cikisNakit">0,00 ₺</td></tr>
+              <tr><td class="bg-gray">BANKA</td><td colspan="2" class="num-right" id="girisBanka">0,00 ₺</td><td class="bg-gray">BANKA</td><td class="num-right" id="cikisBanka">0,00 ₺</td></tr>
+              <tr><td class="bg-gray">ÇEK / SENET</td><td colspan="2" class="num-right" id="girisCek">0,00 ₺</td><td class="bg-gray">ÇEK / SENET</td><td class="num-right" id="cikisCek">0,00 ₺</td></tr>
+              <tr><td class="bg-gray text-red">TOPLAM</td><td colspan="2" class="num-right text-red" id="girisToplam">0,00 ₺</td><td class="bg-gray text-red">TOPLAM</td><td class="num-right text-red" id="cikisToplam">0,00 ₺</td></tr>
+              <tr class="bg-red-row"><td colspan="4">KASA GÜNLÜK BAKİYE</td><td class="num-right" id="gunlukBakiye">0,00 ₺</td></tr>
             </tbody>
           </table>
         </div>
-
-        <!-- SAĞ: YIL / AY FİLTRE VE GENEL BAKİYE -->
-        <div class="kasa-summary-box">
-          <table class="kasa-summary-table">
+        <div class="summary-box">
+          <table>
             <thead>
               <tr>
-                <th class="kasa-subhead">YIL</th>
-                <th><select id="filtreYil" onchange="renderKasaSummary()" style="margin:0;padding:4px 8px;font-size:12px"></select></th>
-                <th class="kasa-subhead">KASA GİRİŞ</th>
-                <th class="kasa-subhead">KASA ÇIKIŞ</th>
+                <th class="bg-gray">YIL</th>
+                <th><select id="filtreYil" onchange="renderKasaSummary()" style="margin:0;padding:3px 6px;font-size:12px"></select></th>
+                <th class="bg-dark" style="text-align:center">KASA GİRİŞ</th>
+                <th class="bg-dark" style="text-align:center">KASA ÇIKIŞ</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="kasa-subhead">AY</td>
+                <td class="bg-gray">AY</td>
                 <td>
-                  <select id="filtreAy" onchange="renderKasaSummary()" style="margin:0;padding:4px 8px;font-size:12px">
+                  <select id="filtreAy" onchange="renderKasaSummary()" style="margin:0;padding:3px 6px;font-size:12px">
                     <option value="">Tümü</option>
-                    <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-                    <option value="4">4</option><option value="5">5</option><option value="6">6</option>
-                    <option value="7">7</option><option value="8">8</option><option value="9">9</option>
-                    <option value="10">10</option><option value="11">11</option><option value="12">12</option>
+                    <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                    <option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option>
+                    <option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option>
                   </select>
                 </td>
                 <td class="num-right" id="donemGiris">0,00 ₺</td>
                 <td class="num-right" id="donemCikis">0,00 ₺</td>
               </tr>
               <tr><td colspan="4">&nbsp;</td></tr>
-              <tr>
-                <td colspan="2" class="kasa-cari-label">CARİ</td>
-                <td colspan="2" class="num-right kasa-cari-val" id="cariToplam">0,00 ₺</td>
-              </tr>
+              <tr><td colspan="2" class="bg-blue-soft">CARİ</td><td colspan="2" class="num-right bg-blue-soft" id="cariToplam">0,00 ₺</td></tr>
               <tr><td colspan="4">&nbsp;</td></tr>
-              <tr class="kasa-grand-row">
-                <td colspan="2">GENEL BAKİYE</td>
-                <td colspan="2" class="num-right" id="genelBakiye">0,00 ₺</td>
-              </tr>
+              <tr><td colspan="2" class="bg-dark">GENEL BAKİYE</td><td colspan="2" class="num-right bg-dark" id="genelBakiye">0,00 ₺</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- YENİ KAYIT FORMU -->
       <div class="form admin-only">
         <input type="date" id="kasaTarih">
-        <input id="kasaAciklama" placeholder="AÇIKLAMA" style="min-width:180px">
-        <select id="kasaTuru">
-          <option value="TAHSİLAT">TAHSİLAT</option>
-          <option value="ÖDEME">ÖDEME</option>
-        </select>
-        <input id="kasaAciklama1" placeholder="AÇIKLAMA 1" style="min-width:140px">
-        <input id="kasaAciklama2" placeholder="AÇIKLAMA 2" style="min-width:140px">
+        <input id="kasaAciklama" placeholder="AÇIKLAMA">
+        <select id="kasaTuru"><option value="TAHSİLAT">TAHSİLAT</option><option value="ÖDEME">ÖDEME</option></select>
+        <input id="kasaAciklama1" placeholder="AÇIKLAMA 1">
+        <input id="kasaAciklama2" placeholder="AÇIKLAMA 2">
         <select id="kasaOdemeTipi">
-          <option value="NAKİT">NAKİT</option>
-          <option value="BANKA">BANKA</option>
-          <option value="KREDİ KARTI">KREDİ KARTI</option>
-          <option value="ÇEK / SENET">ÇEK / SENET</option>
+          <option value="NAKİT">NAKİT</option><option value="BANKA">BANKA</option>
+          <option value="KREDİ KARTI">KREDİ KARTI</option><option value="ÇEK / SENET">ÇEK / SENET</option>
         </select>
-        <input type="number" step="0.01" id="kasaTahsilat" placeholder="TAHSİLAT (₺)" style="width:130px">
-        <input type="number" step="0.01" id="kasaOdeme" placeholder="ÖDEME (₺)" style="width:130px">
-        <input type="number" step="0.01" id="kasaKartOdemeleri" placeholder="KART ÖDEMELERİ (₺)" style="width:165px">
+        <input type="number" step="0.01" id="kasaTahsilat" placeholder="TAHSİLAT" style="width:115px">
+        <input type="number" step="0.01" id="kasaOdeme" placeholder="ÖDEME" style="width:115px">
+        <input type="number" step="0.01" id="kasaKartOdemeleri" placeholder="KART ÖDEMELERİ" style="width:140px">
         <input id="kasaCari" placeholder="CARİ" style="width:130px">
         <button onclick="addCash()">Kayıt Ekle</button>
       </div>
 
-      <!-- HAREKET TABLOSU -->
       <div style="overflow-x:auto">
         <table>
           <thead>
-            <tr>
-              <th>YIL</th>
-              <th>AY</th>
-              <th>TARİH</th>
-              <th>AÇIKLAMA</th>
-              <th>KASA TÜRÜ</th>
-              <th>AÇIKLAMA 1</th>
-              <th>AÇIKLAMA 2</th>
-              <th>TAHSİLAT - ÖDEME TİPİ</th>
-              <th class="num-right">TAHSİLAT</th>
-              <th class="num-right">ÖDEME</th>
-              <th class="num-right">KART ÖDEMELERİ</th>
-              <th>CARİ</th>
-              <th class="admin-only">İŞLEM</th>
+            <tr class="bg-dark">
+              <th>YIL</th><th>AY</th><th>TARİH</th><th>AÇIKLAMA</th><th>KASA TÜRÜ</th><th>AÇIKLAMA 1</th><th>AÇIKLAMA 2</th>
+              <th>TAHSİLAT - ÖDEME TİPİ</th><th class="num-right">TAHSİLAT</th><th class="num-right">ÖDEME</th>
+              <th class="num-right">KART ÖDEMELERİ</th><th>CARİ</th><th class="admin-only">SİL</th>
             </tr>
           </thead>
-          <tbody id="cashTableBody"><tr><td colspan="13">Kayıt yok.</td></tr></tbody>
+          <tbody id="cashTableBody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- MÜŞTERİLER -->
-  <section id="musteri" class="section">
+  <!-- 3. SATIŞ FATURALARI -->
+  <section id="satis" class="section">
     <div class="panel">
-      <h2>Müşteriler</h2>
-      <div class="form admin-only">
-        <input id="musteriAd" placeholder="Müşteri Adı / Ünvanı" style="min-width:220px">
-        <input id="musteriTel" placeholder="Telefon">
-        <input id="musteriVergi" placeholder="Vergi / TC No">
-        <button onclick="addSimpleRecord('customers', {ad: val('musteriAd'), telefon: val('musteriTel'), vergi_no: val('musteriVergi')}, loadCustomers)">Müşteri Ekle</button>
+      <h2>SATIŞ FATURALARI</h2>
+      <div class="summary-grid-2">
+        <div class="summary-box">
+          <table>
+            <tr><td class="bg-gray">CARİLER</td><td colspan="2"><input id="satisFiltreCari" oninput="renderSalesInvoices()" placeholder="Şirket adı ara..." style="width:100%;margin:0"></td></tr>
+            <tr><td class="bg-gray">AY</td><td><select id="satisFiltreAy" onchange="renderSalesInvoices()" style="margin:0"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></td><td class="num-right bg-cream" id="satisAyToplam">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">YIL</td><td><input type="number" id="satisFiltreYil" value="2026" onchange="renderSalesInvoices()" style="width:90px;margin:0"></td><td class="num-right bg-cream" id="satisYilToplam">0,00 ₺</td></tr>
+          </table>
+        </div>
+        <div class="summary-box">
+          <table>
+            <tr><td class="bg-gray">TOPLAM KDV</td><td class="num-right bg-cream" id="satisTopKdv">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">TUTAR (MATRAH)</td><td class="num-right bg-cream" id="satisTopMatrah">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">GENEL TOPLAM</td><td class="num-right bg-cream" id="satisGenelToplam">0,00 ₺</td></tr>
+          </table>
+        </div>
       </div>
-      <table>
-        <thead><tr><th>Ad / Ünvan</th><th>Telefon</th><th>Vergi / TC</th><th class="admin-only">İşlem</th></tr></thead>
-        <tbody id="customersBody"><tr><td colspan="4">Kayıt yok.</td></tr></tbody>
-      </table>
+
+      <div class="form admin-only">
+        <input type="date" id="sfTarih">
+        <input id="sfKodu" placeholder="Fat. Kodu" style="width:100px">
+        <input id="sfNo" placeholder="Fatura No" style="width:120px">
+        <input id="sfSirket" placeholder="Şirket Adı" style="min-width:170px">
+        <input type="number" step="0.01" id="sfKdvOran" value="20" placeholder="KDV Oran %" style="width:95px">
+        <input type="number" step="0.01" id="sfMatrah" placeholder="KDV Matrahı" style="width:120px">
+        <input type="number" step="0.01" id="sfIskonto" placeholder="Toplam İskonto" style="width:120px">
+        <input type="number" step="0.01" id="sfOdeme" placeholder="ÖDEME" style="width:110px">
+        <select id="sfOdemeTipi"><option value="BANKA">BANKA</option><option value="NAKİT">NAKİT</option><option value="KREDİ KARTI">KREDİ KARTI</option><option value="ÇEK">ÇEK</option><option value="AÇIK HESAP">AÇIK HESAP</option></select>
+        <input id="sfNotlar" placeholder="Notlar">
+        <button onclick="addSalesInvoice()">Satış Faturası Ekle</button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="bg-navy">AY</th><th class="bg-navy">Fatura Tarihi</th><th class="bg-navy">Fat. Kodu</th><th class="bg-navy">Fatura No</th>
+              <th class="bg-navy">Şirket Adı</th><th class="bg-navy">KDV Oran</th><th class="bg-navy num-right">KDV Matrahı</th>
+              <th class="bg-navy num-right">Toplam İskonto</th><th class="bg-navy num-right">KDV</th><th class="bg-navy num-right">Fatura Toplamı</th>
+              <th class="bg-navy num-right">ÖDEME</th><th class="bg-navy">ÖDEME TİPİ</th><th class="bg-navy">Notlar</th><th class="bg-navy admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="salesInvoicesBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- TEDARİKÇİLER -->
-  <section id="tedarikci" class="section">
+  <!-- 4. ALIŞ FATURALARI -->
+  <section id="alis" class="section">
     <div class="panel">
-      <h2>Tedarikçiler</h2>
-      <div class="form admin-only">
-        <input id="tedarikciAd" placeholder="Tedarikçi Adı / Ünvanı" style="min-width:220px">
-        <input id="tedarikciTel" placeholder="Telefon">
-        <button onclick="addSimpleRecord('suppliers', {ad: val('tedarikciAd'), telefon: val('tedarikciTel')}, loadSuppliers)">Tedarikçi Ekle</button>
+      <h2>ALIŞ FATURALARI</h2>
+      <div class="summary-grid-2">
+        <div class="summary-box">
+          <table>
+            <tr><td class="bg-gray">CARİLER</td><td colspan="2"><input id="alisFiltreCari" oninput="renderPurchaseInvoices()" placeholder="Şirket adı ara..." style="width:100%;margin:0"></td></tr>
+            <tr><td class="bg-gray">AY</td><td><select id="alisFiltreAy" onchange="renderPurchaseInvoices()" style="margin:0"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></td><td class="num-right bg-cream" id="alisAyToplam">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">YIL</td><td><input type="number" id="alisFiltreYil" value="2026" onchange="renderPurchaseInvoices()" style="width:90px;margin:0"></td><td class="num-right bg-cream" id="alisYilToplam">0,00 ₺</td></tr>
+          </table>
+        </div>
+        <div class="summary-box">
+          <table>
+            <tr><td class="bg-gray">TOPLAM KDV</td><td class="num-right bg-cream" id="alisTopKdv">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">TUTAR (MATRAH)</td><td class="num-right bg-cream" id="alisTopMatrah">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">GENEL TOPLAM</td><td class="num-right bg-cream" id="alisGenelToplam">0,00 ₺</td></tr>
+          </table>
+        </div>
       </div>
-      <table>
-        <thead><tr><th>Ad / Ünvan</th><th>Telefon</th><th class="admin-only">İşlem</th></tr></thead>
-        <tbody id="suppliersBody"><tr><td colspan="3">Kayıt yok.</td></tr></tbody>
-      </table>
+
+      <div class="form admin-only">
+        <input type="date" id="afTarih">
+        <input id="afNo" placeholder="Fatura No" style="width:120px">
+        <input id="afSirket" placeholder="Şirket Adı" style="min-width:170px">
+        <input type="number" step="0.01" id="afKdvOran" value="20" placeholder="KDV Oran %" style="width:95px">
+        <input type="number" step="0.01" id="afMatrah" placeholder="KDV Matrahı" style="width:120px">
+        <input type="number" step="0.01" id="afIskonto" placeholder="Toplam İskonto" style="width:120px">
+        <input type="number" step="0.01" id="afOdeme" placeholder="Ödeme" style="width:110px">
+        <select id="afOdendi"><option value="ÖDENDİ">ÖDENDİ</option><option value="ÖDENMEDİ">ÖDENMEDİ</option><option value="KISMİ">KISMİ</option></select>
+        <input id="afNotlar" placeholder="Notlar">
+        <button onclick="addPurchaseInvoice()">Alış Faturası Ekle</button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="bg-navy">YIL</th><th class="bg-navy">AY</th><th class="bg-navy">Fatura Tarihi</th><th class="bg-navy">Fatura No</th>
+              <th class="bg-navy">Şirket Adı</th><th class="bg-navy">KDV Oran</th><th class="bg-navy num-right">KDV Matrahı</th>
+              <th class="bg-navy num-right">Toplam İskonto</th><th class="bg-navy num-right">KDV</th><th class="bg-navy num-right">Fatura Toplamı</th>
+              <th class="bg-navy num-right">Ödeme</th><th class="bg-navy">ÖDENDİ</th><th class="bg-navy">Notlar</th><th class="bg-navy admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="purchaseInvoicesBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- SÜRÜKLE-BIRAK EXCEL YÜKLEME (SADECE ADMİN) -->
+  <!-- 5. KDV TAKİBİ -->
+  <section id="kdv" class="section">
+    <div class="panel">
+      <h2>2026 YILI KDV TAKİBİ</h2>
+      <div class="form admin-only">
+        <input type="date" id="kdvTarih">
+        <input type="number" step="0.01" id="kdvAlisTop" placeholder="ALIŞ FAT. TOPLAM">
+        <input type="number" step="0.01" id="kdvAlisKdv" placeholder="ALIŞ FAT. KDV">
+        <input type="number" step="0.01" id="kdvSatisTop" placeholder="SATIŞ FAT. TOPLAM">
+        <input type="number" step="0.01" id="kdvSatisKdv" placeholder="SATIŞ FAT. KDV">
+        <input type="number" step="0.01" id="kdvOdenen" placeholder="ÖDENEN">
+        <input type="number" step="0.01" id="kdvDevreden" placeholder="DEVREDEN">
+        <button onclick="addVatRow()">KDV Kaydı Ekle</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="bg-gray text-red">TARİH</th><th class="bg-gray text-red num-right">ALIŞ FAT. TOPLAM</th><th class="bg-gray text-red num-right">ALIŞ FAT. KDV</th>
+              <th class="bg-gray text-red num-right">SATIŞ FAT. TOPLAM</th><th class="bg-gray text-red num-right">SATIŞ FAT. KDV</th>
+              <th class="bg-gray text-red num-right">ÇIKAN KDV</th><th class="bg-gray text-red num-right">ÖDENEN</th><th class="bg-gray text-red num-right">DEVREDEN</th>
+              <th class="bg-gray admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="vatTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ÖDEMELER & VADELER -->
+  <section id="vadeler" class="section">
+    <div class="panel">
+      <h2>Fatura Ödemeleri & Vade Takibi</h2>
+      <div class="summary-box" style="max-width:650px;margin-bottom:15px">
+        <table>
+          <thead><tr><th colspan="2" class="bg-green">DÖNEM</th><th class="bg-green num-right">ÖDENEN</th><th class="bg-green num-right">KALAN</th></tr></thead>
+          <tbody>
+            <tr><td class="bg-green">YIL</td><td><input type="number" id="vadeFiltreYil" value="2026" onchange="renderSchedules()" style="width:90px;margin:0"></td><td class="num-right" id="vadeYilOdenen">0,00 ₺</td><td class="num-right" id="vadeYilKalan">0,00 ₺</td></tr>
+            <tr><td class="bg-green">AY</td><td><select id="vadeFiltreAy" onchange="renderSchedules()" style="margin:0"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></td><td class="num-right" id="vadeAyOdenen">0,00 ₺</td><td class="num-right" id="vadeAyKalan">0,00 ₺</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form admin-only">
+        <input type="date" id="schTarih" title="Fatura Tarihi">
+        <input id="schNo" placeholder="Fatura No">
+        <input id="schSirket" placeholder="Şirket Adı">
+        <input type="number" step="0.01" id="schTutar" placeholder="TUTAR">
+        <input type="date" id="schVade" title="Vade">
+        <select id="schDurum"><option value="ÖDENMEDİ">ÖDENMEDİ</option><option value="ÖDENDİ">ÖDENDİ</option></select>
+        <button onclick="addSchedule()">Ekle</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="bg-green">YIL</th><th class="bg-green">AY</th><th class="bg-green">Fatura Tarihi</th><th class="bg-green">Fatura No</th>
+              <th class="bg-green">Şirket Adı</th><th class="bg-green num-right">TUTAR</th><th class="bg-green">VADE</th><th class="bg-green">DURUM</th><th class="bg-green admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="schedulesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. FATURA ÖDEMESİ YAPILACAKLAR (IBAN) -->
+  <section id="yapilacakOdeme" class="section">
+    <div class="panel">
+      <h2>Fatura Ödemesi — Yapılacaklar</h2>
+      <div class="form admin-only">
+        <input id="upCari" placeholder="CARİLER" style="min-width:180px">
+        <input type="date" id="upTarih">
+        <input type="number" step="0.01" id="upTutar" placeholder="Tutar">
+        <input id="upIban" placeholder="IBAN BİLGİLERİ" style="min-width:240px">
+        <input type="date" id="upVade" title="VADE">
+        <button onclick="addUpcomingPayment()">Ödeme Listesine Ekle</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th class="bg-green">CARİLER</th><th class="bg-green">TARİH</th><th class="bg-green num-right">Tutar</th><th class="bg-green">IBAN BİLGİLERİ</th><th class="bg-green">VADE</th><th class="bg-green admin-only">SİL</th></tr>
+          </thead>
+          <tbody id="upcomingBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. CARİ EKSTRE & KARTLAR -->
+  <section id="cari" class="section">
+    <div class="panel">
+      <h2>Cari Kart & Ekstre</h2>
+      <div class="form admin-only">
+        <input id="cKartUnvan" placeholder="ÜNVAN (Zorunlu)" style="min-width:200px">
+        <input id="cKartVkn" placeholder="Vkn - Tckn">
+        <input id="cKartAdres" placeholder="ADRES" style="min-width:200px">
+        <input id="cKartTel" placeholder="TEL">
+        <input id="cKartMail" placeholder="Mail">
+        <input id="cKartBanka" placeholder="BANKA / IBAN">
+        <button onclick="addCariAccount()">Cari Kart Kaydet</button>
+      </div>
+
+      <div style="margin:12px 0">
+        <label><strong>Cari Seçin: </strong></label>
+        <select id="seciliCariSelect" onchange="renderCariEkstre()" style="min-width:280px"></select>
+      </div>
+
+      <div class="cari-card-grid">
+        <div class="summary-box">
+          <table class="cari-info-table">
+            <tr><td>ÜNVAN:</td><td id="ckUnvan">-</td></tr>
+            <tr><td>Vkn - Tckn:</td><td id="ckVkn">-</td></tr>
+            <tr><td>ADRES:</td><td id="ckAdres">-</td></tr>
+            <tr><td>TEL:</td><td id="ckTel">-</td></tr>
+            <tr><td>Mail:</td><td id="ckMail">-</td></tr>
+            <tr><td>BANKA:</td><td id="ckBanka">-</td></tr>
+          </table>
+        </div>
+        <div class="summary-box">
+          <table>
+            <tr><td class="bg-gray">ALACAK BAKİYE</td><td class="num-right" id="ckAlacakTop">0,00 ₺</td></tr>
+            <tr><td class="bg-gray">BORÇ BAKİYE</td><td class="num-right" id="ckBorcTop">0,00 ₺</td></tr>
+            <tr><td class="text-red" style="font-size:15px">BAKİYE</td><td class="num-right text-red" style="font-size:16px" id="ckNetBakiye">0,00 ₺</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="form admin-only">
+        <input type="date" id="cmTarih">
+        <input id="cmBelge" placeholder="BELGE">
+        <input id="cmTip" placeholder="HAREKET TİPİ">
+        <input type="number" step="0.01" id="cmBorc" placeholder="BORÇ">
+        <input type="number" step="0.01" id="cmAlacak" placeholder="ALACAK">
+        <input type="date" id="cmVade" title="VADE">
+        <input id="cmAciklama" placeholder="AÇIKLAMA" style="min-width:180px">
+        <button onclick="addCariMovement()">Cari Hareket Ekle</button>
+      </div>
+
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th class="bg-gray">TARİH</th><th class="bg-gray">BELGE</th><th class="bg-gray">HAREKET TİPİ</th>
+              <th class="bg-gray num-right">BORÇ</th><th class="bg-gray num-right">ALACAK</th><th class="bg-gray num-right">BAKİYE</th>
+              <th class="bg-gray">VADE</th><th class="bg-gray">AÇIKLAMA</th><th class="bg-gray admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="cariMovementsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. AYLIK RAPOR -->
+  <section id="aylikRapor" class="section">
+    <div class="panel">
+      <h2>AYLIK RAPOR — ORSO OTO, SAVAŞ KARAOĞLANOĞLU OTOMOTİV LTD.</h2>
+      <div class="summary-box" style="max-width:750px;margin-bottom:15px">
+        <table>
+          <thead>
+            <tr><th colspan="2" class="bg-gray" style="text-align:center">KASA</th><th class="bg-gray">YIL</th><th class="bg-gray">AY</th><th colspan="2" class="bg-gray" style="text-align:center">KAR / ZARAR</th></tr>
+            <tr><th class="bg-gray">YIL</th><th class="bg-gray">AY</th><th><input type="number" id="mrFiltreYil" value="2026" onchange="renderMonthlyReports()" style="width:80px;margin:0"></th><th><select id="mrFiltreAy" onchange="renderMonthlyReports()" style="margin:0"><option value="">Tümü</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select></th><th class="bg-gray">YIL</th><th class="bg-gray">AY</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="num-right text-red" id="mrKasaYil">0,00 ₺</td><td class="num-right text-red" id="mrKasaAy">0,00 ₺</td><td colspan="2" style="text-align:center;font-weight:bold">GENEL TABLO</td><td class="num-right text-red" id="mrKzYil">0,00 ₺</td><td class="num-right text-red" id="mrKzAy">0,00 ₺</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="form admin-only">
+        <input type="date" id="mrTarih">
+        <input type="number" step="0.01" id="mrAlis" placeholder="ALIŞ FATURA" style="width:110px">
+        <input type="number" step="0.01" id="mrSatis" placeholder="SATIŞ FATURA" style="width:115px">
+        <input type="number" step="0.01" id="mrNakit" placeholder="NAKİT" style="width:100px">
+        <input type="number" step="0.01" id="mrBanka" placeholder="BANKALAR" style="width:105px">
+        <input type="number" step="0.01" id="mrKart" placeholder="KREDİ KARTI" style="width:110px">
+        <input type="number" step="0.01" id="mrAlCek" placeholder="ALINAN ÇEK" style="width:110px">
+        <input type="number" step="0.01" id="mrVerCek" placeholder="VERİLEN ÇEK" style="width:110px">
+        <input type="number" step="0.01" id="mrOdemeler" placeholder="ÖDEMELER" style="width:110px">
+        <button onclick="addMonthlyReport()">Rapor Satırı Ekle</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr class="bg-dark">
+              <th>YIL</th><th>AY</th><th>TARİH</th><th class="num-right">ALIŞ FATURA</th><th class="num-right">SATIŞ FATURA</th>
+              <th class="num-right">NAKİT</th><th class="num-right">BANKALAR</th><th class="num-right">KREDİ KARTI</th>
+              <th class="num-right">ALINAN ÇEK</th><th class="num-right">VERİLEN ÇEK</th><th class="num-right">ÖDEMELER</th>
+              <th class="num-right">KASA</th><th class="num-right">KAR/ZARAR</th><th class="admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyReportsBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. HASAR DOSYALARI -->
+  <section id="hasar" class="section">
+    <div class="panel">
+      <h2>HASAR DOSYALARI</h2>
+      <div class="form admin-only">
+        <input type="date" id="hdFatTarih" title="Fatura Tarihi">
+        <input id="hdUnvan" placeholder="Unvan">
+        <input id="hdPlaka" placeholder="Plaka" style="width:110px">
+        <input id="hdFatNo" placeholder="Fatura No" style="width:115px">
+        <input id="hdSigorta" placeholder="Sigorta Şirketi">
+        <input id="hdDosyaNo" placeholder="Dosya No" style="width:115px">
+        <input type="number" step="0.01" id="hdKdv" placeholder="Kdv" style="width:95px">
+        <input type="number" step="0.01" id="hdTevkifat" placeholder="KDV Tevkifatı" style="width:115px">
+        <input type="number" step="0.01" id="hdToplam" placeholder="Toplam Fatura" style="width:120px">
+        <input id="hdAciklama" placeholder="Açıklama">
+        <input type="date" id="hdOdemeTarih" title="Ödeme Tarihi">
+        <input type="number" step="0.01" id="hdOdenen" placeholder="Ödenen Tutar" style="width:115px">
+        <input id="hdOdemeSekli" placeholder="Ödeme Şekli" style="width:115px">
+        <input type="date" id="hdVade" title="VADE">
+        <input id="hdOdemeGunu" placeholder="ÖDEME GÜNÜ" style="width:115px">
+        <button onclick="addDamageFile()">Hasar Dosyası Ekle</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr class="bg-dark">
+              <th>Fatura Tarihi</th><th>Unvan</th><th>Plaka</th><th>Fatura No</th><th>Sigorta Şirketi</th><th>Dosya No</th>
+              <th class="num-right">Kdv</th><th class="num-right">KDV Tevkifatı</th><th class="num-right">Toplam Fatura</th>
+              <th>Açıklama</th><th>Ödeme Tarihi</th><th class="num-right">Ödenen Tutar</th><th class="num-right">KALAN</th>
+              <th>Ödeme Şekli</th><th>VADE</th><th>ÖDEME GÜNÜ</th><th class="admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="damageFilesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. ARAÇLAR -->
+  <section id="arac" class="section">
+    <div class="panel">
+      <h2>ARAÇLAR</h2>
+      <div class="form admin-only">
+        <input id="arPlaka" placeholder="PLAKA" style="width:110px">
+        <input type="date" id="arAlisTarih" title="ALIŞ TARİHİ">
+        <input id="arSatici" placeholder="SATICI UNVAN">
+        <input id="arMarka" placeholder="MARKA MODEL">
+        <input id="arFatSekli" placeholder="FATURA ŞEKLİ" style="width:120px">
+        <input id="arUnvan" placeholder="UNVAN">
+        <input type="number" step="0.01" id="arAlisFiyat" placeholder="ALIŞ FİYATI" style="width:115px">
+        <input id="arAlisOdeme" placeholder="ALIŞ ÖDEME" style="width:110px">
+        <input id="arAlisAcik" placeholder="ALIŞ AÇIKLAMA">
+        <input type="date" id="arSatisTarih" title="SATIŞ TARİHİ">
+        <input id="arSatilanKisi" placeholder="SATILAN KİŞİ">
+        <input type="number" step="0.01" id="arSatisFiyat" placeholder="SATIŞ FİYATI" style="width:115px">
+        <input id="arSatisOdeme" placeholder="SATIŞ ÖDEME" style="width:110px">
+        <input id="arSatisAcik" placeholder="SATIŞ AÇIKLAMA">
+        <button onclick="addVehicle()">Araç Kaydet</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>PLAKA</th><th>ALIŞ TARİHİ</th><th>SATICI UNVAN</th><th>MARKA MODEL</th><th>FATURA ŞEKLİ</th><th>UNVAN</th>
+              <th class="num-right">ALIŞ FİYATI</th><th>ÖDEME</th><th>AÇIKLAMA</th><th>SATIŞ TARİHİ</th><th>SATILAN KİŞİ</th>
+              <th class="num-right">SATIŞ FİYATI</th><th>ÖDEME</th><th>AÇIKLAMA</th><th class="admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="vehiclesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. ÇALIŞANLARIN LİSTESİ -->
+  <section id="personel" class="section">
+    <div class="panel">
+      <h2>Çalışanların Listesi</h2>
+      <div style="display:flex;gap:12px;margin-bottom:12px">
+        <div class="summary-box" style="padding:10px 18px"><strong>DEVAM: </strong><span id="empDevamCount" style="font-size:18px;font-weight:bold;color:#16a34a">0</span></div>
+        <div class="summary-box" style="padding:10px 18px"><strong>AYRILDI: </strong><span id="empAyrildiCount" style="font-size:18px;font-weight:bold;color:#dc2626">0</span></div>
+      </div>
+      <div class="form admin-only">
+        <input id="empAd" placeholder="Çalışan Adları">
+        <input type="date" id="empDogum" title="DOĞUM TARİHİ">
+        <input id="empTc" placeholder="KİMLİK NO" style="width:120px">
+        <input id="empTel" placeholder="TEL NO" style="width:120px">
+        <input id="empBanka" placeholder="BANKA / IBAN">
+        <input id="empKod" placeholder="Çalışma Kodu" style="width:110px">
+        <input type="date" id="empBas" title="BAŞLANGIÇ TARİHİ">
+        <input type="date" id="empSgk" title="SGK BAŞLANGIÇ">
+        <input type="number" step="0.01" id="empMaas1" placeholder="MAAŞ 01" style="width:105px">
+        <input type="number" step="0.01" id="empMaas2" placeholder="MAAŞ 02" style="width:105px">
+        <input type="number" step="0.5" id="empYil25" placeholder="Yıllık 2025" style="width:95px">
+        <input type="number" step="0.5" id="empYil26" placeholder="2026" style="width:85px">
+        <input id="empIzinTur" placeholder="İzin Türü" style="width:105px">
+        <input type="number" step="0.5" id="empKulIzin" placeholder="Kullanılan izin" style="width:110px">
+        <select id="empDurum"><option value="DEVAM">DEVAM</option><option value="AYRILDI">AYRILDI</option></select>
+        <input type="date" id="empAyrilis" title="Ayrılış Tarihi">
+        <input id="empYakini" placeholder="YAKINI" style="width:120px">
+        <button onclick="addEmployee()">VERİ EKLE</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr class="bg-dark">
+              <th>Çalışan Adları</th><th>DOĞUM TARİHİ</th><th>KİMLİK NO</th><th>TEL NO</th><th>BANKA</th><th>Çalışma Kodu</th>
+              <th>BAŞLANGIÇ TARİHİ</th><th>SGK BAŞLANGIÇ</th><th class="num-right">MAAŞ 01</th><th class="num-right">MAAŞ 02</th>
+              <th>Yıllık 2025</th><th>2026</th><th>İzin Türü</th><th>Kullanılan izin</th><th>KALAN</th><th>DURUM</th>
+              <th>Ayrılış Tarihi</th><th>YAKINI</th><th class="admin-only">SİL</th>
+            </tr>
+          </thead>
+          <tbody id="employeesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. İZİN KAYITLARI -->
+  <section id="izin" class="section">
+    <div class="panel">
+      <h2>İzin Kayıtları</h2>
+      <div class="form admin-only">
+        <input id="lvAd" placeholder="Çalışanın adı">
+        <input type="date" id="lvBas" title="Başlangıç tarihi">
+        <input type="date" id="lvBit" title="Bitiş tarihi">
+        <select id="lvTur"><option value="YILLIK İZİN">YILLIK İZİN</option><option value="MAZERET İZNİ">MAZERET İZNİ</option><option value="RAPORLU">RAPORLU</option><option value="ÜCRETSİZ İZİN">ÜCRETSİZ İZİN</option></select>
+        <input type="number" step="0.5" id="lvGun" placeholder="Gün" style="width:85px">
+        <button onclick="addLeave()">KAYIT</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr class="bg-dark"><th>Çalışan Adları</th><th>Başlangıç tarihi</th><th>Bitiş tarihi</th><th>İzin türü</th><th>Gün</th><th class="admin-only">SİL</th></tr>
+          </thead>
+          <tbody id="leavesBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14. EXCEL TOPLU YÜKLEME -->
   <section id="excel" class="section">
     <div class="panel">
-      <h2>Sürükle-Bırak Excel Yükleme</h2>
-      <p style="color:#64748b;font-size:14px">Önce verilerin aktarılacağı tabloyu seçin, ardından Excel (.xlsx, .xls, .csv) dosyanızı aşağıdaki alana sürükleyip bırakın.</p>
-      
+      <h2>Sürükle-Bırak Excel Toplu Yükleme</h2>
       <div class="form">
-        <label><strong>Hedef Tablo:</strong></label>
+        <label><strong>Hedef Modül:</strong></label>
         <select id="excelTargetTable">
           <option value="cash_transactions">Kasa Defteri (cash_transactions)</option>
-          <option value="customers">Müşteriler (customers)</option>
-          <option value="suppliers">Tedarikçiler (suppliers)</option>
-          <option value="invoices">Faturalar (invoices)</option>
-          <option value="invoice_payments">Fatura Ödemeleri (invoice_payments)</option>
+          <option value="sales_invoices">Satış Faturaları (sales_invoices)</option>
+          <option value="purchase_invoices">Alış Faturaları (purchase_invoices)</option>
+          <option value="vat_tracking">KDV Takibi (vat_tracking)</option>
+          <option value="invoice_schedules">Ödemeler & Vadeler (invoice_schedules)</option>
+          <option value="upcoming_payments">Fatura Ödemesi IBAN (upcoming_payments)</option>
+          <option value="monthly_reports">Aylık Rapor (monthly_reports)</option>
+          <option value="damage_files">Hasar Dosyaları (damage_files)</option>
+          <option value="vehicles">Araçlar (vehicles)</option>
+          <option value="employees">Çalışanların Listesi (employees)</option>
+          <option value="employee_leaves">İzin Kayıtları (employee_leaves)</option>
+          <option value="cari_movements">Cari Ekstre Hareketleri (cari_movements)</option>
         </select>
       </div>
-
       <div id="dropzone" class="dropzone" onclick="document.getElementById('excelFileInput').click()">
         <p><strong>📂 Excel dosyasını buraya sürükleyip bırakın</strong></p>
-        <p>veya dosya seçmek için tıklayın</p>
-        <small>Desteklenen formatlar: .xlsx, .xls, .csv (İlk satır sütun başlığı olmalıdır)</small>
+        <small>İlk satır veritabanı sütun adlarıyla eşleşmelidir (.xlsx, .xls, .csv)</small>
         <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none" onchange="handleFileSelect(event)">
       </div>
-
       <div id="excelPreviewArea" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
           <strong id="excelSummaryText"></strong>
@@ -360,37 +715,31 @@ body.is-admin th.admin-only, body.is-admin td.admin-only{display:table-cell}
             <button class="btn-success" onclick="uploadExcelToSupabase()">Veritabanına Aktar</button>
           </div>
         </div>
-        <div style="overflow-x:auto;max-height:360px">
-          <table id="excelPreviewTable"></table>
-        </div>
+        <div style="overflow-x:auto;max-height:360px"><table id="excelPreviewTable"></table></div>
       </div>
     </div>
   </section>
-
-  <!-- DİĞER BÖLÜMLER -->
-  <section id="alis" class="section"><div class="panel"><h2>Alış Faturaları</h2><p>Excel Yükle sekmesinden <code>invoices</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
-  <section id="satis" class="section"><div class="panel"><h2>Satış Faturaları</h2><p>Excel Yükle sekmesinden <code>invoices</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
-  <section id="odeme" class="section"><div class="panel"><h2>Fatura Ödemeleri</h2><p>Excel Yükle sekmesinden <code>invoice_payments</code> tablosuna toplu aktarım yapabilirsiniz.</p></div></section>
-  <section id="kdv" class="section"><div class="panel"><h2>KDV Takibi</h2><p>Alış ve satış KDV kayıtları burada takip edilecek.</p></div></section>
-  <section id="arac" class="section"><div class="panel"><h2>Araç Alış Satış</h2><p>Araç alış, satış ve ödeme kayıtları burada tutulacak.</p></div></section>
-  <section id="stok" class="section"><div class="panel"><h2>Stok Durumu</h2><p>Stok giriş ve çıkışları burada takip edilecek.</p></div></section>
-  <section id="personel" class="section"><div class="panel"><h2>Personel Listesi</h2><p>Personel kayıtları burada tutulacak.</p></div></section>
-  <section id="izin" class="section"><div class="panel"><h2>Personel İzinleri</h2><p>Personel izin kayıtları burada tutulacak.</p></div></section>
-  <section id="hasar" class="section"><div class="panel"><h2>Hasar Dosyaları</h2><p>Hasar dosyaları ve ödemeleri burada takip edilecek.</p></div></section>
 </main>
 
 <script>
 const SUPABASE_URL = 'https://nkbihnpjnnfqmnjydfwa.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_0ZONDBCJueYJqi1gEf8OkA_cfFQEjsU';
-
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 let currentUser = null;
 let isAdmin = false;
 let parsedExcelRows = [];
 let cashRowsCache = [];
+let salesCache = [];
+let purchaseCache = [];
+let schedulesCache = [];
+let monthlyCache = [];
+let cariAccountsCache = [];
+let cariMovementsCache = [];
 
 const val = (id) => document.getElementById(id).value.trim();
-const formatMoney = (n) => Number(n || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
+const num = (id) => Number(document.getElementById(id).value || 0);
+const fmt = (n) => Number(n || 0).toLocaleString('tr-TR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ₺';
 
 function openPage(id, element) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -412,12 +761,7 @@ async function checkSession() {
   document.getElementById('loginOverlay').style.display = 'none';
   document.getElementById('userEmailText').textContent = currentUser.email;
 
-  const { data: roleData } = await sb
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', currentUser.id)
-    .maybeSingle();
-
+  const { data: roleData } = await sb.from('user_roles').select('role').eq('user_id', currentUser.id).maybeSingle();
   isAdmin = roleData && roleData.role === 'admin';
   const badge = document.getElementById('roleBadge');
 
@@ -432,23 +776,20 @@ async function checkSession() {
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  document.getElementById('kasaTarih').value = today;
-  document.getElementById('ozetTarih').value = today;
+  ['kasaTarih','ozetTarih','sfTarih','afTarih','kdvTarih','schTarih','upTarih','cmTarih','mrTarih','hdFatTarih','arAlisTarih','lvBas','lvBit'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = today;
+  });
+
   await loadAllData();
 }
 
 async function handleLogin() {
-  const email = val('loginEmail');
-  const password = val('loginPassword');
   const errDiv = document.getElementById('loginError');
   errDiv.textContent = '';
-
-  const { error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) {
-    errDiv.textContent = 'Giriş başarısız: ' + error.message;
-  } else {
-    await checkSession();
-  }
+  const { error } = await sb.auth.signInWithPassword({ email: val('loginEmail'), password: val('loginPassword') });
+  if (error) errDiv.textContent = 'Giriş başarısız: ' + error.message;
+  else await checkSession();
 }
 
 async function handleLogout() {
@@ -456,265 +797,7 @@ async function handleLogout() {
   location.reload();
 }
 
-async function loadAllData() {
-  await Promise.all([loadCash(), loadCustomers(), loadSuppliers()]);
-}
-
-function getRowDateStr(r) {
-  return (r.tarih || r.islem_tarihi || '').toString().slice(0, 10);
-}
-
-function getRowYear(r) {
-  if (r.yil) return Number(r.yil);
-  const d = getRowDateStr(r);
-  return d ? Number(d.slice(0, 4)) : '';
-}
-
-function getRowMonth(r) {
-  if (r.ay) return Number(r.ay);
-  const d = getRowDateStr(r);
-  return d ? Number(d.slice(5, 7)) : '';
-}
-
-function normalizeTip(tip) {
-  const t = (tip || '').toString().toUpperCase().trim();
-  if (t.includes('KRED')) return 'KREDİ KARTI';
-  if (t.includes('BANK')) return 'BANKA';
-  if (t.includes('ÇEK') || t.includes('CEK') || t.includes('SENET')) return 'ÇEK / SENET';
-  return 'NAKİT';
-}
-
-function populateYearFilter(rows) {
-  const sel = document.getElementById('filtreYil');
-  const currentSel = sel.value;
-  const years = new Set([new Date().getFullYear()]);
-  rows.forEach(r => {
-    const y = getRowYear(r);
-    if (y) years.add(y);
-  });
-  const sorted = Array.from(years).sort((a, b) => b - a);
-  sel.innerHTML = '<option value="">Tümü</option>' + sorted.map(y => `<option value="${y}">${y}</option>`).join('');
-  if (currentSel && sorted.includes(Number(currentSel))) {
-    sel.value = currentSel;
-  } else if (!currentSel) {
-    sel.value = String(new Date().getFullYear());
-  }
-}
-
-function renderKasaSummary() {
-  const rows = cashRowsCache;
-  const seciliTarih = val('ozetTarih');
-  const seciliYil = val('filtreYil');
-  const seciliAy = val('filtreAy');
-
-  const gMap = { 'KREDİ KARTI': 0, 'NAKİT': 0, 'BANKA': 0, 'ÇEK / SENET': 0 };
-  const cMap = { 'KREDİ KARTI': 0, 'NAKİT': 0, 'BANKA': 0, 'ÇEK / SENET': 0 };
-
-  let donemGiris = 0;
-  let donemCikis = 0;
-  let genelGiris = 0;
-  let genelCikis = 0;
-  let cariToplam = 0;
-
-  rows.forEach(r => {
-    const tah = Number(r.tahsilat || 0);
-    const ode = Number(r.odeme || 0);
-    const kartOde = Number(r.kart_odemeleri || 0);
-    const rowDate = getRowDateStr(r);
-    const rowYil = String(getRowYear(r));
-    const rowAy = String(getRowMonth(r));
-    const tip = normalizeTip(r.odeme_tipi);
-
-    genelGiris += tah;
-    genelCikis += ode;
-
-    if ((r.cari || '').toString().trim()) {
-      cariToplam += (tah - ode);
-    }
-
-    if (seciliTarih && rowDate === seciliTarih) {
-      gMap[tip] += tah;
-      cMap[tip] += ode + kartOde;
-    }
-
-    const yilUygun = !seciliYil || rowYil === seciliYil;
-    const ayUygun = !seciliAy || rowAy === seciliAy;
-    if (yilUygun && ayUygun) {
-      donemGiris += tah;
-      donemCikis += ode;
-    }
-  });
-
-  const girisTop = Object.values(gMap).reduce((a, b) => a + b, 0);
-  const cikisTop = Object.values(cMap).reduce((a, b) => a + b, 0);
-  const gunlukBak = girisTop - cikisTop;
-  const genelBak = genelGiris - genelCikis;
-
-  document.getElementById('girisKredi').textContent = formatMoney(gMap['KREDİ KARTI']);
-  document.getElementById('girisNakit').textContent = formatMoney(gMap['NAKİT']);
-  document.getElementById('girisBanka').textContent = formatMoney(gMap['BANKA']);
-  document.getElementById('girisCek').textContent = formatMoney(gMap['ÇEK / SENET']);
-  document.getElementById('girisToplam').textContent = formatMoney(girisTop);
-
-  document.getElementById('cikisKredi').textContent = formatMoney(cMap['KREDİ KARTI']);
-  document.getElementById('cikisNakit').textContent = formatMoney(cMap['NAKİT']);
-  document.getElementById('cikisBanka').textContent = formatMoney(cMap['BANKA']);
-  document.getElementById('cikisCek').textContent = formatMoney(cMap['ÇEK / SENET']);
-  document.getElementById('cikisToplam').textContent = formatMoney(cikisTop);
-
-  document.getElementById('gunlukBakiye').textContent = formatMoney(gunlukBak);
-  document.getElementById('donemGiris').textContent = formatMoney(donemGiris);
-  document.getElementById('donemCikis').textContent = formatMoney(donemCikis);
-  document.getElementById('cariToplam').textContent = formatMoney(cariToplam);
-  document.getElementById('genelBakiye').textContent = formatMoney(genelBak);
-
-  document.getElementById('statKasa').textContent = formatMoney(genelBak);
-  document.getElementById('statAlacak').textContent = formatMoney(genelGiris);
-  document.getElementById('statBorc').textContent = formatMoney(genelCikis);
-}
-
-async function loadCash() {
-  const { data, error } = await sb
-    .from('cash_transactions')
-    .select('*')
-    .order('id', { ascending: false });
-
-  if (error) return console.error(error);
-
-  cashRowsCache = data || [];
-  populateYearFilter(cashRowsCache);
-  renderKasaSummary();
-
-  const tbody = document.getElementById('cashTableBody');
-  const recentBody = document.getElementById('recentCashBody');
-
-  if (!cashRowsCache.length) {
-    tbody.innerHTML = '<tr><td colspan="13">Henüz kayıt bulunmuyor.</td></tr>';
-    recentBody.innerHTML = '<tr><td colspan="5">Henüz kayıt bulunmuyor.</td></tr>';
-    return;
-  }
-
-  tbody.innerHTML = cashRowsCache.map(row => {
-    const dStr = getRowDateStr(row);
-    const yil = getRowYear(row);
-    const ay = getRowMonth(row);
-    return `
-      <tr>
-        <td>${yil || '-'}</td>
-        <td>${ay || '-'}</td>
-        <td>${dStr || '-'}</td>
-        <td>${row.aciklama || row['Açıklama'] || '-'}</td>
-        <td>${row.kasa_turu || row['işlem_türü'] || '-'}</td>
-        <td>${row.aciklama_1 || '-'}</td>
-        <td>${row.aciklama_2 || '-'}</td>
-        <td>${row.odeme_tipi || '-'}</td>
-        <td class="num-right">${formatMoney(row.tahsilat)}</td>
-        <td class="num-right">${formatMoney(row.odeme)}</td>
-        <td class="num-right">${formatMoney(row.kart_odemeleri)}</td>
-        <td>${row.cari || '-'}</td>
-        <td class="admin-only">
-          <button class="btn-danger" onclick="deleteRecord('cash_transactions', '${row.id}', loadCash)">Sil</button>
-        </td>
-      </tr>
-    `;
-  }).join('');
-
-  recentBody.innerHTML = cashRowsCache.slice(0, 5).map(row => `
-    <tr>
-      <td>${getRowDateStr(row) || '-'}</td>
-      <td>${row.kasa_turu || row['işlem_türü'] || '-'}</td>
-      <td>${row.aciklama || row['Açıklama'] || '-'}</td>
-      <td>${formatMoney(row.tahsilat)}</td>
-      <td>${formatMoney(row.odeme)}</td>
-    </tr>
-  `).join('');
-}
-
-async function addCash() {
-  if (!isAdmin) return alert('Bu işlem için yönetici yetkisi gerekir.');
-  const tarihVal = val('kasaTarih') || new Date().toISOString().slice(0, 10);
-  const dt = new Date(tarihVal);
-  const tahsilat = Number(val('kasaTahsilat') || 0);
-  const odeme = Number(val('kasaOdeme') || 0);
-  const kartOdemeleri = Number(val('kasaKartOdemeleri') || 0);
-
-  const payload = {
-    tarih: tarihVal,
-    yil: dt.getFullYear(),
-    ay: dt.getMonth() + 1,
-    aciklama: val('kasaAciklama'),
-    kasa_turu: val('kasaTuru'),
-    aciklama_1: val('kasaAciklama1'),
-    aciklama_2: val('kasaAciklama2'),
-    odeme_tipi: val('kasaOdemeTipi'),
-    tahsilat: tahsilat,
-    odeme: odeme,
-    kart_odemeleri: kartOdemeleri,
-    cari: val('kasaCari')
-  };
-
-  if (!payload.aciklama) return alert('Açıklama giriniz.');
-  if (tahsilat === 0 && odeme === 0 && kartOdemeleri === 0) {
-    return alert('Tahsilat, Ödeme veya Kart Ödemeleri tutarından en az birini giriniz.');
-  }
-
-  const { error } = await sb.from('cash_transactions').insert([payload]);
-  if (error) return alert('Hata: ' + error.message);
-
-  document.getElementById('kasaAciklama').value = '';
-  document.getElementById('kasaAciklama1').value = '';
-  document.getElementById('kasaAciklama2').value = '';
-  document.getElementById('kasaTahsilat').value = '';
-  document.getElementById('kasaOdeme').value = '';
-  document.getElementById('kasaKartOdemeleri').value = '';
-  document.getElementById('kasaCari').value = '';
-  await loadCash();
-}
-
-async function loadCustomers() {
-  const { data } = await sb.from('customers').select('*').order('ad', { ascending: true });
-  const tbody = document.getElementById('customersBody');
-  document.getElementById('statMusteri').textContent = data ? data.length : 0;
-
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4">Henüz müşteri kaydı yok.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(c => `
-    <tr>
-      <td>${c.ad || '-'}</td>
-      <td>${c.telefon || '-'}</td>
-      <td>${c.vergi_no || '-'}</td>
-      <td class="admin-only"><button class="btn-danger" onclick="deleteRecord('customers', '${c.id}', loadCustomers)">Sil</button></td>
-    </tr>
-  `).join('');
-}
-
-async function loadSuppliers() {
-  const { data } = await sb.from('suppliers').select('*').order('ad', { ascending: true });
-  const tbody = document.getElementById('suppliersBody');
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="3">Henüz tedarikçi kaydı yok.</td></tr>';
-    return;
-  }
-  tbody.innerHTML = data.map(s => `
-    <tr>
-      <td>${s.ad || '-'}</td>
-      <td>${s.telefon || '-'}</td>
-      <td class="admin-only"><button class="btn-danger" onclick="deleteRecord('suppliers', '${s.id}', loadSuppliers)">Sil</button></td>
-    </tr>
-  `).join('');
-}
-
-async function addSimpleRecord(table, payload, reloadFn) {
-  if (!isAdmin) return alert('Yetkisiz işlem.');
-  if (!payload.ad) return alert('Lütfen ad/ünvan alanını doldurun.');
-  const { error } = await sb.from(table).insert([payload]);
-  if (error) return alert('Hata: ' + error.message);
-  await reloadFn();
-}
-
-async function deleteRecord(table, id, reloadFn) {
+async function deleteRow(table, id, reloadFn) {
   if (!isAdmin) return alert('Yetkisiz işlem.');
   if (!confirm('Bu kaydı silmek istediğinize emin misiniz?')) return;
   const { error } = await sb.from(table).delete().eq('id', id);
@@ -722,60 +805,577 @@ async function deleteRecord(table, id, reloadFn) {
   await reloadFn();
 }
 
-// SÜRÜKLE-BIRAK EXCEL OKUMA VE AKTARMA
-const dropzone = document.getElementById('dropzone');
-['dragenter', 'dragover'].forEach(evt => {
-  dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.add('dragover'); });
-});
-['dragleave', 'drop'].forEach(evt => {
-  dropzone.addEventListener(evt, (e) => { e.preventDefault(); dropzone.classList.remove('dragover'); });
-});
-dropzone.addEventListener('drop', (e) => {
-  const file = e.dataTransfer.files[0];
-  if (file) processExcelFile(file);
-});
-
-function handleFileSelect(e) {
-  const file = e.target.files[0];
-  if (file) processExcelFile(file);
+async function loadAllData() {
+  await Promise.all([
+    loadCash(), loadSalesInvoices(), loadPurchaseInvoices(), loadVat(),
+    loadSchedules(), loadUpcoming(), loadCariAll(), loadMonthlyReports(),
+    loadDamageFiles(), loadVehicles(), loadEmployees(), loadLeaves()
+  ]);
 }
+
+/* --- KASA DEFTERİ --- */
+function normalizeTip(tip) {
+  const t = (tip || '').toString().toUpperCase();
+  if (t.includes('KRED')) return 'KREDİ KARTI';
+  if (t.includes('BANK')) return 'BANKA';
+  if (t.includes('ÇEK') || t.includes('CEK') || t.includes('SENET')) return 'ÇEK / SENET';
+  return 'NAKİT';
+}
+
+function renderKasaSummary() {
+  const seciliTarih = val('ozetTarih');
+  const seciliYil = val('filtreYil');
+  const seciliAy = val('filtreAy');
+  const gMap = { 'KREDİ KARTI': 0, 'NAKİT': 0, 'BANKA': 0, 'ÇEK / SENET': 0 };
+  const cMap = { 'KREDİ KARTI': 0, 'NAKİT': 0, 'BANKA': 0, 'ÇEK / SENET': 0 };
+  let donemGiris = 0, donemCikis = 0, genelGiris = 0, genelCikis = 0, cariToplam = 0;
+
+  cashRowsCache.forEach(r => {
+    const tah = Number(r.tahsilat || 0);
+    const ode = Number(r.odeme || 0);
+    const kartOde = Number(r.kart_odemeleri || 0);
+    const dStr = (r.tarih || '').slice(0, 10);
+    const yStr = String(r.yil || (dStr ? dStr.slice(0, 4) : ''));
+    const aStr = String(r.ay || (dStr ? Number(dStr.slice(5, 7)) : ''));
+    const tip = normalizeTip(r.odeme_tipi);
+
+    genelGiris += tah;
+    genelCikis += ode;
+    if ((r.cari || '').trim()) cariToplam += (tah - ode);
+    if (seciliTarih && dStr === seciliTarih) {
+      gMap[tip] += tah;
+      cMap[tip] += ode + kartOde;
+    }
+    if ((!seciliYil || yStr === seciliYil) && (!seciliAy || aStr === seciliAy)) {
+      donemGiris += tah;
+      donemCikis += ode;
+    }
+  });
+
+  const gTop = Object.values(gMap).reduce((a, b) => a + b, 0);
+  const cTop = Object.values(cMap).reduce((a, b) => a + b, 0);
+  const genelBak = genelGiris - genelCikis;
+
+  document.getElementById('girisKredi').textContent = fmt(gMap['KREDİ KARTI']);
+  document.getElementById('girisNakit').textContent = fmt(gMap['NAKİT']);
+  document.getElementById('girisBanka').textContent = fmt(gMap['BANKA']);
+  document.getElementById('girisCek').textContent = fmt(gMap['ÇEK / SENET']);
+  document.getElementById('girisToplam').textContent = fmt(gTop);
+  document.getElementById('cikisKredi').textContent = fmt(cMap['KREDİ KARTI']);
+  document.getElementById('cikisNakit').textContent = fmt(cMap['NAKİT']);
+  document.getElementById('cikisBanka').textContent = fmt(cMap['BANKA']);
+  document.getElementById('cikisCek').textContent = fmt(cMap['ÇEK / SENET']);
+  document.getElementById('cikisToplam').textContent = fmt(cTop);
+  document.getElementById('gunlukBakiye').textContent = fmt(gTop - cTop);
+  document.getElementById('donemGiris').textContent = fmt(donemGiris);
+  document.getElementById('donemCikis').textContent = fmt(donemCikis);
+  document.getElementById('cariToplam').textContent = fmt(cariToplam);
+  document.getElementById('genelBakiye').textContent = fmt(genelBak);
+  document.getElementById('statKasa').textContent = fmt(genelBak);
+}
+
+async function loadCash() {
+  const { data } = await sb.from('cash_transactions').select('*').order('id', { ascending: false });
+  cashRowsCache = data || [];
+  const sel = document.getElementById('filtreYil');
+  const years = new Set([new Date().getFullYear()]);
+  cashRowsCache.forEach(r => { if (r.yil) years.add(Number(r.yil)); });
+  sel.innerHTML = '<option value="">Tümü</option>' + Array.from(years).sort((a,b)=>b-a).map(y => `<option value="${y}">${y}</option>`).join('');
+  sel.value = String(new Date().getFullYear());
+  renderKasaSummary();
+
+  document.getElementById('cashTableBody').innerHTML = cashRowsCache.length ? cashRowsCache.map(r => `
+    <tr>
+      <td>${r.yil || '-'}</td><td>${r.ay || '-'}</td><td>${r.tarih || '-'}</td><td>${r.aciklama || '-'}</td>
+      <td>${r.kasa_turu || '-'}</td><td>${r.aciklama_1 || '-'}</td><td>${r.aciklama_2 || '-'}</td><td>${r.odeme_tipi || '-'}</td>
+      <td class="num-right">${fmt(r.tahsilat)}</td><td class="num-right">${fmt(r.odeme)}</td><td class="num-right">${fmt(r.kart_odemeleri)}</td>
+      <td>${r.cari || '-'}</td><td class="admin-only"><button class="btn-danger" onclick="deleteRow('cash_transactions','${r.id}',loadCash)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="13">Kayıt yok.</td></tr>';
+
+  document.getElementById('recentCashBody').innerHTML = cashRowsCache.slice(0, 6).map(r => `
+    <tr><td>${r.tarih || '-'}</td><td>${r.kasa_turu || '-'}</td><td>${r.aciklama || '-'}</td><td>${r.odeme_tipi || '-'}</td><td class="num-right">${fmt(r.tahsilat)}</td><td class="num-right">${fmt(r.odeme)}</td></tr>
+  `).join('') || '<tr><td colspan="6">Kayıt yok.</td></tr>';
+}
+
+async function addCash() {
+  const t = val('kasaTarih');
+  const dt = new Date(t);
+  const { error } = await sb.from('cash_transactions').insert([{
+    tarih: t, yil: dt.getFullYear(), ay: dt.getMonth() + 1, aciklama: val('kasaAciklama'),
+    kasa_turu: val('kasaTuru'), aciklama_1: val('kasaAciklama1'), aciklama_2: val('kasaAciklama2'),
+    odeme_tipi: val('kasaOdemeTipi'), tahsilat: num('kasaTahsilat'), odeme: num('kasaOdeme'),
+    kart_odemeleri: num('kasaKartOdemeleri'), cari: val('kasaCari')
+  }]);
+  if (error) return alert(error.message);
+  await loadCash();
+}
+
+/* --- SATIŞ FATURALARI --- */
+function renderSalesInvoices() {
+  const cariQ = val('satisFiltreCari').toLowerCase();
+  const ayQ = val('satisFiltreAy');
+  const yilQ = val('satisFiltreYil');
+  let ayTop = 0, yilTop = 0, topKdv = 0, topMatrah = 0, genelTop = 0;
+
+  const filtered = salesCache.filter(r => {
+    const okCari = !cariQ || (r.sirket_adi || '').toLowerCase().includes(cariQ);
+    const okYil = !yilQ || String(r.yil) === yilQ;
+    const okAy = !ayQ || String(r.ay) === ayQ;
+    if (okCari && okYil) yilTop += Number(r.fatura_toplami || 0);
+    if (okCari && okYil && okAy) ayTop += Number(r.fatura_toplami || 0);
+    return okCari && okYil && okAy;
+  });
+
+  filtered.forEach(r => {
+    topKdv += Number(r.kdv || 0);
+    topMatrah += Number(r.kdv_matrahi || 0);
+    genelTop += Number(r.fatura_toplami || 0);
+  });
+
+  document.getElementById('satisAyToplam').textContent = fmt(ayTop);
+  document.getElementById('satisYilToplam').textContent = fmt(yilTop);
+  document.getElementById('satisTopKdv').textContent = fmt(topKdv);
+  document.getElementById('satisTopMatrah').textContent = fmt(topMatrah);
+  document.getElementById('satisGenelToplam').textContent = fmt(genelTop);
+  document.getElementById('statSatis').textContent = fmt(salesCache.reduce((a,b)=>a+Number(b.fatura_toplami||0),0));
+
+  document.getElementById('salesInvoicesBody').innerHTML = filtered.length ? filtered.map(r => `
+    <tr>
+      <td>${r.ay || '-'}</td><td>${r.fatura_tarihi || '-'}</td><td>${r.fat_kodu || '-'}</td><td>${r.fatura_no || '-'}</td>
+      <td>${r.sirket_adi || '-'}</td><td>%${r.kdv_orani ?? 0}</td><td class="num-right">${fmt(r.kdv_matrahi)}</td>
+      <td class="num-right">${fmt(r.toplam_iskonto)}</td><td class="num-right">${fmt(r.kdv)}</td><td class="num-right"><strong>${fmt(r.fatura_toplami)}</strong></td>
+      <td class="num-right">${fmt(r.odeme)}</td><td>${r.odeme_tipi || '-'}</td><td>${r.notlar || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('sales_invoices','${r.id}',loadSalesInvoices)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="14">Kayıt yok.</td></tr>';
+}
+
+async function loadSalesInvoices() {
+  const { data } = await sb.from('sales_invoices').select('*').order('fatura_tarihi', { ascending: false });
+  salesCache = data || [];
+  renderSalesInvoices();
+}
+
+async function addSalesInvoice() {
+  const t = val('sfTarih'); const dt = new Date(t);
+  const matrah = num('sfMatrah'); const isk = num('sfIskonto'); const oran = num('sfKdvOran');
+  const netMatrah = Math.max(0, matrah - isk);
+  const kdv = netMatrah * (oran / 100);
+  const toplam = netMatrah + kdv;
+  const { error } = await sb.from('sales_invoices').insert([{
+    yil: dt.getFullYear(), ay: dt.getMonth() + 1, fatura_tarihi: t, fat_kodu: val('sfKodu'),
+    fatura_no: val('sfNo'), sirket_adi: val('sfSirket'), kdv_orani: oran, kdv_matrahi: matrah,
+    toplam_iskonto: isk, kdv: kdv, fatura_toplami: toplam, odeme: num('sfOdeme'),
+    odeme_tipi: val('sfOdemeTipi'), notlar: val('sfNotlar')
+  }]);
+  if (error) return alert(error.message);
+  await loadSalesInvoices();
+}
+
+/* --- ALIŞ FATURALARI --- */
+function renderPurchaseInvoices() {
+  const cariQ = val('alisFiltreCari').toLowerCase();
+  const ayQ = val('alisFiltreAy');
+  const yilQ = val('alisFiltreYil');
+  let ayTop = 0, yilTop = 0, topKdv = 0, topMatrah = 0, genelTop = 0;
+
+  const filtered = purchaseCache.filter(r => {
+    const okCari = !cariQ || (r.sirket_adi || '').toLowerCase().includes(cariQ);
+    const okYil = !yilQ || String(r.yil) === yilQ;
+    const okAy = !ayQ || String(r.ay) === ayQ;
+    if (okCari && okYil) yilTop += Number(r.fatura_toplami || 0);
+    if (okCari && okYil && okAy) ayTop += Number(r.fatura_toplami || 0);
+    return okCari && okYil && okAy;
+  });
+
+  filtered.forEach(r => {
+    topKdv += Number(r.kdv || 0);
+    topMatrah += Number(r.kdv_matrahi || 0);
+    genelTop += Number(r.fatura_toplami || 0);
+  });
+
+  document.getElementById('alisAyToplam').textContent = fmt(ayTop);
+  document.getElementById('alisYilToplam').textContent = fmt(yilTop);
+  document.getElementById('alisTopKdv').textContent = fmt(topKdv);
+  document.getElementById('alisTopMatrah').textContent = fmt(topMatrah);
+  document.getElementById('alisGenelToplam').textContent = fmt(genelTop);
+  document.getElementById('statAlis').textContent = fmt(purchaseCache.reduce((a,b)=>a+Number(b.fatura_toplami||0),0));
+
+  document.getElementById('purchaseInvoicesBody').innerHTML = filtered.length ? filtered.map(r => `
+    <tr>
+      <td>${r.yil || '-'}</td><td>${r.ay || '-'}</td><td>${r.fatura_tarihi || '-'}</td><td>${r.fatura_no || '-'}</td>
+      <td>${r.sirket_adi || '-'}</td><td>%${r.kdv_orani ?? 0}</td><td class="num-right">${fmt(r.kdv_matrahi)}</td>
+      <td class="num-right">${fmt(r.toplam_iskonto)}</td><td class="num-right">${fmt(r.kdv)}</td><td class="num-right"><strong>${fmt(r.fatura_toplami)}</strong></td>
+      <td class="num-right">${fmt(r.odeme)}</td><td>${r.odendi || '-'}</td><td>${r.notlar || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('purchase_invoices','${r.id}',loadPurchaseInvoices)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="14">Kayıt yok.</td></tr>';
+}
+
+async function loadPurchaseInvoices() {
+  const { data } = await sb.from('purchase_invoices').select('*').order('fatura_tarihi', { ascending: false });
+  purchaseCache = data || [];
+  renderPurchaseInvoices();
+}
+
+async function addPurchaseInvoice() {
+  const t = val('afTarih'); const dt = new Date(t);
+  const matrah = num('afMatrah'); const isk = num('afIskonto'); const oran = num('afKdvOran');
+  const netMatrah = Math.max(0, matrah - isk);
+  const kdv = netMatrah * (oran / 100);
+  const toplam = netMatrah + kdv;
+  const { error } = await sb.from('purchase_invoices').insert([{
+    yil: dt.getFullYear(), ay: dt.getMonth() + 1, fatura_tarihi: t, fatura_no: val('afNo'),
+    sirket_adi: val('afSirket'), kdv_orani: oran, kdv_matrahi: matrah, toplam_iskonto: isk,
+    kdv: kdv, fatura_toplami: toplam, odeme: num('afOdeme'), odendi: val('afOdendi'), notlar: val('afNotlar')
+  }]);
+  if (error) return alert(error.message);
+  await loadPurchaseInvoices();
+}
+
+/* --- KDV TAKİBİ --- */
+async function loadVat() {
+  const { data } = await sb.from('vat_tracking').select('*').order('tarih', { ascending: true });
+  document.getElementById('vatTableBody').innerHTML = (data && data.length) ? data.map(r => `
+    <tr>
+      <td>${r.tarih || '-'}</td><td class="num-right">${fmt(r.alis_fat_toplam)}</td><td class="num-right">${fmt(r.alis_fat_kdv)}</td>
+      <td class="num-right">${fmt(r.satis_fat_toplam)}</td><td class="num-right">${fmt(r.satis_fat_kdv)}</td>
+      <td class="num-right"><strong>${fmt(r.cikan_kdv)}</strong></td><td class="num-right">${fmt(r.odenen)}</td><td class="num-right">${fmt(r.devreden)}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('vat_tracking','${r.id}',loadVat)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="9">Kayıt yok.</td></tr>';
+}
+
+async function addVatRow() {
+  const t = val('kdvTarih');
+  const alisKdv = num('kdvAlisKdv'), satisKdv = num('kdvSatisKdv'), odenen = num('kdvOdenen'), devreden = num('kdvDevreden');
+  const cikan = Math.max(0, satisKdv - alisKdv - devreden);
+  const { error } = await sb.from('vat_tracking').insert([{
+    yil: new Date(t).getFullYear(), tarih: t, alis_fat_toplam: num('kdvAlisTop'), alis_fat_kdv: alisKdv,
+    satis_fat_toplam: num('kdvSatisTop'), satis_fat_kdv: satisKdv, cikan_kdv: cikan, odenen: odenen, devreden: devreden
+  }]);
+  if (error) return alert(error.message);
+  await loadVat();
+}
+
+/* --- ÖDEMELER & VADELER --- */
+function renderSchedules() {
+  const yilQ = val('vadeFiltreYil');
+  const ayQ = val('vadeFiltreAy');
+  let yilOd = 0, yilKal = 0, ayOd = 0, ayKal = 0;
+
+  schedulesCache.forEach(r => {
+    const tutar = Number(r.tutar || 0);
+    const odendi = (r.durum || '').toUpperCase() === 'ÖDENDİ';
+    if (!yilQ || String(r.yil) === yilQ) {
+      if (odendi) yilOd += tutar; else yilKal += tutar;
+      if (!ayQ || String(r.ay) === ayQ) {
+        if (odendi) ayOd += tutar; else ayKal += tutar;
+      }
+    }
+  });
+
+  document.getElementById('vadeYilOdenen').textContent = fmt(yilOd);
+  document.getElementById('vadeYilKalan').textContent = fmt(yilKal);
+  document.getElementById('vadeAyOdenen').textContent = fmt(ayOd);
+  document.getElementById('vadeAyKalan').textContent = fmt(ayKal);
+
+  const list = schedulesCache.filter(r => (!yilQ || String(r.yil) === yilQ) && (!ayQ || String(r.ay) === ayQ));
+  document.getElementById('schedulesBody').innerHTML = list.length ? list.map(r => `
+    <tr>
+      <td>${r.yil || '-'}</td><td>${r.ay || '-'}</td><td>${r.fatura_tarihi || '-'}</td><td>${r.fatura_no || '-'}</td>
+      <td>${r.sirket_adi || '-'}</td><td class="num-right">${fmt(r.tutar)}</td><td>${r.vade || '-'}</td><td><strong>${r.durum || '-'}</strong></td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('invoice_schedules','${r.id}',loadSchedules)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="9">Kayıt yok.</td></tr>';
+}
+
+async function loadSchedules() {
+  const { data } = await sb.from('invoice_schedules').select('*').order('vade', { ascending: true });
+  schedulesCache = data || [];
+  renderSchedules();
+}
+
+async function addSchedule() {
+  const t = val('schTarih'); const dt = new Date(t);
+  const { error } = await sb.from('invoice_schedules').insert([{
+    yil: dt.getFullYear(), ay: dt.getMonth() + 1, fatura_tarihi: t, fatura_no: val('schNo'),
+    sirket_adi: val('schSirket'), tutar: num('schTutar'), vade: val('schVade'), durum: val('schDurum')
+  }]);
+  if (error) return alert(error.message);
+  await loadSchedules();
+}
+
+/* --- YAPILACAK FATURA ÖDEMELERİ (IBAN) --- */
+async function loadUpcoming() {
+  const { data } = await sb.from('upcoming_payments').select('*').order('vade', { ascending: true });
+  document.getElementById('upcomingBody').innerHTML = (data && data.length) ? data.map(r => `
+    <tr>
+      <td>${r.cariler || '-'}</td><td>${r.tarih || '-'}</td><td class="num-right"><strong>${fmt(r.tutar)}</strong></td>
+      <td>${r.iban_bilgileri || '-'}</td><td>${r.vade || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('upcoming_payments','${r.id}',loadUpcoming)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="6">Kayıt yok.</td></tr>';
+}
+
+async function addUpcomingPayment() {
+  const { error } = await sb.from('upcoming_payments').insert([{
+    cariler: val('upCari'), tarih: val('upTarih'), tutar: num('upTutar'), iban_bilgileri: val('upIban'), vade: val('upVade')
+  }]);
+  if (error) return alert(error.message);
+  await loadUpcoming();
+}
+
+/* --- CARİ EKSTRE & KARTLAR --- */
+async function loadCariAll() {
+  const [{ data: accs }, { data: movs }] = await Promise.all([
+    sb.from('cari_accounts').select('*').order('unvan', { ascending: true }),
+    sb.from('cari_movements').select('*').order('tarih', { ascending: true })
+  ]);
+  cariAccountsCache = accs || [];
+  cariMovementsCache = movs || [];
+
+  const allNames = new Set(cariAccountsCache.map(a => a.unvan));
+  cariMovementsCache.forEach(m => { if (m.cari_unvan) allNames.add(m.cari_unvan); });
+
+  const sel = document.getElementById('seciliCariSelect');
+  const prev = sel.value;
+  sel.innerHTML = Array.from(allNames).map(u => `<option value="${u}">${u}</option>`).join('');
+  if (prev && allNames.has(prev)) sel.value = prev;
+  renderCariEkstre();
+}
+
+function renderCariEkstre() {
+  const unvan = val('seciliCariSelect');
+  const kart = cariAccountsCache.find(a => a.unvan === unvan) || {};
+  document.getElementById('ckUnvan').textContent = unvan || '-';
+  document.getElementById('ckVkn').textContent = kart.vkn_tckn || '-';
+  document.getElementById('ckAdres').textContent = kart.adres || '-';
+  document.getElementById('ckTel').textContent = kart.tel || '-';
+  document.getElementById('ckMail').textContent = kart.mail || '-';
+  document.getElementById('ckBanka').textContent = kart.banka || '-';
+
+  const movs = cariMovementsCache.filter(m => m.cari_unvan === unvan);
+  let borcTop = 0, alacakTop = 0, running = 0;
+
+  document.getElementById('cariMovementsBody').innerHTML = movs.length ? movs.map(m => {
+    const b = Number(m.borc || 0), a = Number(m.alacak || 0);
+    borcTop += b; alacakTop += a; running += (b - a);
+    return `
+      <tr>
+        <td>${m.tarih || '-'}</td><td>${m.belge || '-'}</td><td>${m.hareket_tipi || '-'}</td>
+        <td class="num-right">${fmt(b)}</td><td class="num-right">${fmt(a)}</td><td class="num-right"><strong>${fmt(running)}</strong></td>
+        <td>${m.vade || '-'}</td><td>${m.aciklama || '-'}</td>
+        <td class="admin-only"><button class="btn-danger" onclick="deleteRow('cari_movements','${m.id}',loadCariAll)">Sil</button></td>
+      </tr>`;
+  }).join('') : '<tr><td colspan="9">Bu cariye ait hareket bulunmuyor.</td></tr>';
+
+  document.getElementById('ckAlacakTop').textContent = fmt(alacakTop);
+  document.getElementById('ckBorcTop').textContent = fmt(borcTop);
+  document.getElementById('ckNetBakiye').textContent = fmt(borcTop - alacakTop);
+}
+
+async function addCariAccount() {
+  const unvan = val('cKartUnvan');
+  if (!unvan) return alert('Ünvan giriniz.');
+  const { error } = await sb.from('cari_accounts').upsert([{
+    unvan, vkn_tckn: val('cKartVkn'), adres: val('cKartAdres'), tel: val('cKartTel'), mail: val('cKartMail'), banka: val('cKartBanka')
+  }], { onConflict: 'unvan' });
+  if (error) return alert(error.message);
+  await loadCariAll();
+  document.getElementById('seciliCariSelect').value = unvan;
+  renderCariEkstre();
+}
+
+async function addCariMovement() {
+  const unvan = val('seciliCariSelect');
+  if (!unvan) return alert('Önce yukarıdan bir cari seçin veya ekleyin.');
+  const { error } = await sb.from('cari_movements').insert([{
+    cari_unvan: unvan, tarih: val('cmTarih'), belge: val('cmBelge'), hareket_tipi: val('cmTip'),
+    borc: num('cmBorc'), alacak: num('cmAlacak'), vade: val('cmVade'), aciklama: val('cmAciklama')
+  }]);
+  if (error) return alert(error.message);
+  await loadCariAll();
+}
+
+/* --- AYLIK RAPOR --- */
+function renderMonthlyReports() {
+  const yilQ = val('mrFiltreYil');
+  const ayQ = val('mrFiltreAy');
+  let kasaYil = 0, kasaAy = 0, kzYil = 0, kzAy = 0;
+
+  monthlyCache.forEach(r => {
+    if (!yilQ || String(r.yil) === yilQ) {
+      kasaYil += Number(r.kasa || 0);
+      kzYil += Number(r.kar_zarar || 0);
+      if (!ayQ || String(r.ay) === ayQ) {
+        kasaAy += Number(r.kasa || 0);
+        kzAy += Number(r.kar_zarar || 0);
+      }
+    }
+  });
+
+  document.getElementById('mrKasaYil').textContent = fmt(kasaYil);
+  document.getElementById('mrKasaAy').textContent = fmt(kasaAy);
+  document.getElementById('mrKzYil').textContent = fmt(kzYil);
+  document.getElementById('mrKzAy').textContent = fmt(kzAy);
+
+  const list = monthlyCache.filter(r => (!yilQ || String(r.yil) === yilQ) && (!ayQ || String(r.ay) === ayQ));
+  document.getElementById('monthlyReportsBody').innerHTML = list.length ? list.map(r => `
+    <tr>
+      <td>${r.yil || '-'}</td><td>${r.ay || '-'}</td><td>${r.tarih || '-'}</td>
+      <td class="num-right">${fmt(r.alis_fatura)}</td><td class="num-right">${fmt(r.satis_fatura)}</td>
+      <td class="num-right">${fmt(r.nakit)}</td><td class="num-right">${fmt(r.bankalar)}</td><td class="num-right">${fmt(r.kredi_karti)}</td>
+      <td class="num-right">${fmt(r.alinan_cek)}</td><td class="num-right">${fmt(r.verilen_cek)}</td><td class="num-right">${fmt(r.odemeler)}</td>
+      <td class="num-right"><strong>${fmt(r.kasa)}</strong></td><td class="num-right"><strong>${fmt(r.kar_zarar)}</strong></td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('monthly_reports','${r.id}',loadMonthlyReports)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="14">Kayıt yok.</td></tr>';
+}
+
+async function loadMonthlyReports() {
+  const { data } = await sb.from('monthly_reports').select('*').order('tarih', { ascending: true });
+  monthlyCache = data || [];
+  renderMonthlyReports();
+}
+
+async function addMonthlyReport() {
+  const t = val('mrTarih'); const dt = new Date(t);
+  const alis = num('mrAlis'), satis = num('mrSatis'), nakit = num('mrNakit'), banka = num('mrBanka'),
+        kart = num('mrKart'), alCek = num('mrAlCek'), verCek = num('mrVerCek'), odemeler = num('mrOdemeler');
+  const kasa = (nakit + banka + kart + alCek) - (verCek + odemeler);
+  const kz = satis - alis;
+  const { error } = await sb.from('monthly_reports').insert([{
+    yil: dt.getFullYear(), ay: dt.getMonth() + 1, tarih: t, alis_fatura: alis, satis_fatura: satis,
+    nakit, bankalar: banka, kredi_karti: kart, alinan_cek: alCek, verilen_cek: verCek, odemeler, kasa, kar_zarar: kz
+  }]);
+  if (error) return alert(error.message);
+  await loadMonthlyReports();
+}
+
+/* --- HASAR DOSYALARI --- */
+async function loadDamageFiles() {
+  const { data } = await sb.from('damage_files').select('*').order('fatura_tarihi', { ascending: false });
+  document.getElementById('damageFilesBody').innerHTML = (data && data.length) ? data.map(r => `
+    <tr>
+      <td>${r.fatura_tarihi || '-'}</td><td>${r.unvan || '-'}</td><td>${r.plaka || '-'}</td><td>${r.fatura_no || '-'}</td>
+      <td>${r.sigorta_sirketi || '-'}</td><td>${r.dosya_no || '-'}</td><td class="num-right">${fmt(r.kdv)}</td>
+      <td class="num-right">${fmt(r.kdv_tevkifati)}</td><td class="num-right">${fmt(r.toplam_fatura)}</td><td>${r.aciklama || '-'}</td>
+      <td>${r.odeme_tarihi || '-'}</td><td class="num-right">${fmt(r.odenen_tutar)}</td><td class="num-right text-red">${fmt(r.kalan)}</td>
+      <td>${r.odeme_sekli || '-'}</td><td>${r.vade || '-'}</td><td>${r.odeme_gunu || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('damage_files','${r.id}',loadDamageFiles)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="17">Kayıt yok.</td></tr>';
+}
+
+async function addDamageFile() {
+  const top = num('hdToplam'), od = num('hdOdenen');
+  const { error } = await sb.from('damage_files').insert([{
+    fatura_tarihi: val('hdFatTarih') || null, unvan: val('hdUnvan'), plaka: val('hdPlaka'), fatura_no: val('hdFatNo'),
+    sigorta_sirketi: val('hdSigorta'), dosya_no: val('hdDosyaNo'), kdv: num('hdKdv'), kdv_tevkifati: num('hdTevkifat'),
+    toplam_fatura: top, aciklama: val('hdAciklama'), odeme_tarihi: val('hdOdemeTarih') || null,
+    odenen_tutar: od, kalan: top - od, odeme_sekli: val('hdOdemeSekli'), vade: val('hdVade') || null, odeme_gunu: val('hdOdemeGunu')
+  }]);
+  if (error) return alert(error.message);
+  await loadDamageFiles();
+}
+
+/* --- ARAÇLAR --- */
+async function loadVehicles() {
+  const { data } = await sb.from('vehicles').select('*').order('alis_tarihi', { ascending: false });
+  document.getElementById('vehiclesBody').innerHTML = (data && data.length) ? data.map(r => `
+    <tr>
+      <td><strong>${r.plaka || '-'}</strong></td><td>${r.alis_tarihi || '-'}</td><td>${r.satici_unvan || '-'}</td><td>${r.marka_model || '-'}</td>
+      <td>${r.fatura_sekli || '-'}</td><td>${r.unvan || '-'}</td><td class="num-right">${fmt(r.alis_fiyati)}</td><td>${r.alis_odeme || '-'}</td>
+      <td>${r.alis_aciklama || '-'}</td><td>${r.satis_tarihi || '-'}</td><td>${r.satilan_kisi || '-'}</td>
+      <td class="num-right">${fmt(r.satis_fiyati)}</td><td>${r.satis_odeme || '-'}</td><td>${r.satis_aciklama || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('vehicles','${r.id}',loadVehicles)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="15">Kayıt yok.</td></tr>';
+}
+
+async function addVehicle() {
+  const { error } = await sb.from('vehicles').insert([{
+    plaka: val('arPlaka'), alis_tarihi: val('arAlisTarih') || null, satici_unvan: val('arSatici'), marka_model: val('arMarka'),
+    fatura_sekli: val('arFatSekli'), unvan: val('arUnvan'), alis_fiyati: num('arAlisFiyat'), alis_odeme: val('arAlisOdeme'),
+    alis_aciklama: val('arAlisAcik'), satis_tarihi: val('arSatisTarih') || null, satilan_kisi: val('arSatilanKisi'),
+    satis_fiyati: num('arSatisFiyat'), satis_odeme: val('arSatisOdeme'), satis_aciklama: val('arSatisAcik')
+  }]);
+  if (error) return alert(error.message);
+  await loadVehicles();
+}
+
+/* --- ÇALIŞANLAR & İZİNLER --- */
+async function loadEmployees() {
+  const { data } = await sb.from('employees').select('*').order('calisan_adi', { ascending: true });
+  const list = data || [];
+  const devam = list.filter(e => (e.durum || '').toUpperCase() === 'DEVAM').length;
+  const ayrildi = list.filter(e => (e.durum || '').toUpperCase() === 'AYRILDI').length;
+  document.getElementById('empDevamCount').textContent = devam;
+  document.getElementById('empAyrildiCount').textContent = ayrildi;
+  document.getElementById('statCalisan').textContent = devam;
+
+  document.getElementById('employeesBody').innerHTML = list.length ? list.map(r => `
+    <tr>
+      <td><strong>${r.calisan_adi || '-'}</strong></td><td>${r.dogum_tarihi || '-'}</td><td>${r.kimlik_no || '-'}</td><td>${r.tel_no || '-'}</td>
+      <td>${r.banka || '-'}</td><td>${r.calisma_kodu || '-'}</td><td>${r.baslangic_tarihi || '-'}</td><td>${r.sgk_baslangic || '-'}</td>
+      <td class="num-right">${fmt(r.maas_01)}</td><td class="num-right">${fmt(r.maas_02)}</td><td>${r.yillik_2025 ?? 0}</td><td>${r.yillik_2026 ?? 0}</td>
+      <td>${r.izin_turu || '-'}</td><td>${r.kullanilan_izin ?? 0}</td><td><strong>${r.kalan ?? 0}</strong></td><td>${r.durum || '-'}</td>
+      <td>${r.ayrilis_tarihi || '-'}</td><td>${r.yakini || '-'}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('employees','${r.id}',loadEmployees)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="19">Kayıt yok.</td></tr>';
+}
+
+async function addEmployee() {
+  const y25 = num('empYil25'), y26 = num('empYil26'), kul = num('empKulIzin');
+  const { error } = await sb.from('employees').insert([{
+    calisan_adi: val('empAd'), dogum_tarihi: val('empDogum') || null, kimlik_no: val('empTc'), tel_no: val('empTel'),
+    banka: val('empBanka'), calisma_kodu: val('empKod'), baslangic_tarihi: val('empBas') || null, sgk_baslangic: val('empSgk') || null,
+    maas_01: num('empMaas1'), maas_02: num('empMaas2'), yillik_2025: y25, yillik_2026: y26,
+    izin_turu: val('empIzinTur'), kullanilan_izin: kul, kalan: (y25 + y26) - kul,
+    durum: val('empDurum'), ayrilis_tarihi: val('empAyrilis') || null, yakini: val('empYakini')
+  }]);
+  if (error) return alert(error.message);
+  await loadEmployees();
+}
+
+async function loadLeaves() {
+  const { data } = await sb.from('employee_leaves').select('*').order('baslangic_tarihi', { ascending: false });
+  document.getElementById('leavesBody').innerHTML = (data && data.length) ? data.map(r => `
+    <tr>
+      <td>${r.calisan_adi || '-'}</td><td>${r.baslangic_tarihi || '-'}</td><td>${r.bitis_tarihi || '-'}</td><td>${r.izin_turu || '-'}</td><td>${r.gun ?? 0}</td>
+      <td class="admin-only"><button class="btn-danger" onclick="deleteRow('employee_leaves','${r.id}',loadLeaves)">Sil</button></td>
+    </tr>`).join('') : '<tr><td colspan="6">Kayıt yok.</td></tr>';
+}
+
+async function addLeave() {
+  const { error } = await sb.from('employee_leaves').insert([{
+    calisan_adi: val('lvAd'), baslangic_tarihi: val('lvBas') || null, bitis_tarihi: val('lvBit') || null,
+    izin_turu: val('lvTur'), gun: num('lvGun')
+  }]);
+  if (error) return alert(error.message);
+  await loadLeaves();
+}
+
+/* --- SÜRÜKLE-BIRAK EXCEL --- */
+const dropzone = document.getElementById('dropzone');
+['dragenter', 'dragover'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
+['dragleave', 'drop'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
+dropzone.addEventListener('drop', e => { if (e.dataTransfer.files[0]) processExcelFile(e.dataTransfer.files[0]); });
+
+function handleFileSelect(e) { if (e.target.files[0]) processExcelFile(e.target.files[0]); }
 
 function processExcelFile(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
-    const data = new Uint8Array(e.target.result);
-    const workbook = XLSX.read(data, { type: 'array', cellDates: true });
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonRows = XLSX.utils.sheet_to_json(firstSheet, { defval: null });
-
-    if (!jsonRows.length) return alert('Excel dosyasında veri bulunamadı.');
-
-    parsedExcelRows = jsonRows.map(row => {
+    const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array', cellDates: true });
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { defval: null });
+    if (!rows.length) return alert('Excel dosyasında veri bulunamadı.');
+    parsedExcelRows = rows.map(row => {
       const clean = {};
-      for (const [k, v] of Object.entries(row)) {
-        if (v instanceof Date) {
-          clean[k.trim()] = v.toISOString().slice(0, 10);
-        } else {
-          clean[k.trim()] = v;
-        }
-      }
+      for (const [k, v] of Object.entries(row)) clean[k.trim()] = v instanceof Date ? v.toISOString().slice(0, 10) : v;
       return clean;
     });
-
-    renderExcelPreview(parsedExcelRows);
+    const headers = Object.keys(parsedExcelRows[0]);
+    document.getElementById('excelSummaryText').textContent = `Toplam ${parsedExcelRows.length} satır okundu (İlk 20 satır)`;
+    document.getElementById('excelPreviewArea').style.display = 'block';
+    document.getElementById('excelPreviewTable').innerHTML =
+      `<thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead>` +
+      `<tbody>${parsedExcelRows.slice(0, 20).map(r=>`<tr>${headers.map(h=>`<td>${r[h]??''}</td>`).join('')}</tr>`).join('')}</tbody>`;
   };
   reader.readAsArrayBuffer(file);
-}
-
-function renderExcelPreview(rows) {
-  const headers = Object.keys(rows[0]);
-  const table = document.getElementById('excelPreviewTable');
-  document.getElementById('excelSummaryText').textContent = `Toplam ${rows.length} satır okundu (İlk 20 satır önizleniyor)`;
-  document.getElementById('excelPreviewArea').style.display = 'block';
-
-  const thead = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>`;
-  const tbody = `<tbody>${rows.slice(0, 20).map(r => `<tr>${headers.map(h => `<td>${r[h] ?? ''}</td>`).join('')}</tr>`).join('')}</tbody>`;
-  table.innerHTML = thead + tbody;
 }
 
 function clearExcelPreview() {
@@ -785,19 +1385,13 @@ function clearExcelPreview() {
 }
 
 async function uploadExcelToSupabase() {
-  if (!isAdmin) return alert('Sadece yönetici toplu aktarım yapabilir.');
-  if (!parsedExcelRows.length) return;
-
-  const targetTable = val('excelTargetTable');
-  const { error } = await sb.from(targetTable).insert(parsedExcelRows);
-
-  if (error) {
-    alert('Aktarım hatası (Excel sütun başlıklarının tablo sütunlarıyla aynı olduğundan emin olun):\n' + error.message);
-  } else {
-    alert(`${parsedExcelRows.length} kayıt başarıyla "${targetTable}" tablosuna aktarıldı!`);
-    clearExcelPreview();
-    await loadAllData();
-  }
+  if (!isAdmin || !parsedExcelRows.length) return;
+  const target = val('excelTargetTable');
+  const { error } = await sb.from(target).insert(parsedExcelRows);
+  if (error) return alert('Aktarım hatası:\n' + error.message);
+  alert(`${parsedExcelRows.length} kayıt "${target}" tablosuna aktarıldı!`);
+  clearExcelPreview();
+  await loadAllData();
 }
 
 checkSession();
