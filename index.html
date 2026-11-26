@@ -87,6 +87,11 @@ body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
 .main{margin-left:0;padding:15px}
 .cards{grid-template-columns:repeat(2,1fr)}
 }
+ .admin-only{display:none}
+body.is-admin .admin-only{display:block}
+body.is-admin .form.admin-only{display:flex}
+body.is-admin th.admin-only,body.is-admin td.admin-only{display:table-cell}
+body:not(.is-admin) .form{display:none !important} 
 </style>
 </head>
 <body>
